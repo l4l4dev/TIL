@@ -1,0 +1,46 @@
+baseURL = 'https://l4l4dev.github.io/TIL/'
+languageCode = 'en-us'
+title = 'Today I Learned'
+theme = 'paper'
+
+[params]
+  # Color theme
+  color = 'linen'               # linen, wheat, gray, light
+
+  # Header social icons
+  github = 'l4l4dev'            # GitHub username
+  twitter = ''                  # Twitter username
+  linkedin = ''                 # LinkedIn username
+  rss = true                   # Show RSS icon with link
+
+  # Home page profile
+  avatar = 'https://avatars.githubusercontent.com/u/4657186'  # Avatar image URL
+  name = 'l4l4dev'
+  bio = 'Today I Learned - Daily learning notes and discoveries'
+
+  # Misc
+  disableHLJS = false           # disable highlight.js
+  monoDarkIcon = true           # show monochrome dark mode icon
+
+# Navigation menu
+[menu]
+  [[menu.main]]
+    identifier = "posts"
+    name = "Posts"
+    url = "/posts/"
+    weight = 1
+  [[menu.main]]
+    identifier = "categories"
+    name = "Categories"
+    url = "/categories/"
+    weight = 2
+  [[menu.main]]
+    identifier = "tags"
+    name = "Tags"
+    url = "/tags/"
+    weight = 3
+
+# Taxonomies
+[taxonomies]
+  category = 'categories'
+  tag = 'tags'
