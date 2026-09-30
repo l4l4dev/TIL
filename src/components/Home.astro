@@ -1,0 +1,11 @@
+---
+// Adapted from Astro Pure src/pages/index.astro: bilingual content and no demo sections.
+import {getCollection} from 'astro:content';
+import {ui,href,type Locale} from '@/i18n';
+import PostList from '@/components/PostList.astro';
+const {lang}=Astro.props as {lang:Locale}; const t=ui[lang];
+const posts=(await getCollection('post',({data})=>!data.draft&&data.lang===lang)).sort((a,b)=>b.data.publishDate.valueOf()-a.data.publishDate.valueOf());
+---
+<section class="pure-profile"><img class="pure-avatar" src={`${import.meta.env.BASE_URL.replace(/\/$/,'')}/avatar.png`} alt="l4l4dev" width="112" height="112" loading="eager"/><h1>l4l4dev</h1><p class="pure-label"><span>iOS Engineer</span><span aria-hidden="true">·</span><a href="https://github.com/l4l4dev">GitHub ↗</a></p></section>
+<section class="pure-section"><h2>{lang==='ja'?'このブログ':'About'}</h2><div><p class="text-global-text! font-medium">{t.intro}</p><p class="mt-3 prose-copy">{t.description}</p><a class="pure-more" href={href(lang,'about/')}>{t.about} →</a></div></section>
+<section class="pure-section"><h2>{t.recent}</h2><div>{posts.length ? <PostList posts={posts.slice(0,10)} lang={lang}/> : <p class="pure-empty">{t.empty}</p>}<a class="pure-more" href={href(lang,'posts/')}>{t.posts} →</a></div></section>

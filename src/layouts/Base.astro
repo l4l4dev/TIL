@@ -9,7 +9,7 @@ const canonical=new URL(Astro.url.pathname,Astro.site);
 ---
 <html lang={lang} class="scroll-smooth">
 <head><meta charset="utf-8"/><meta name="viewport" content="width=device-width"/><title>{title} · TIL</title><meta name="description" content={description}/><link rel="canonical" href={canonical}/><link rel="icon" href={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/icon.svg`}/><link rel="alternate" type="application/rss+xml" href={href(lang,'rss.xml')} title="TIL"/>{hasTranslation && <><link rel="alternate" hreflang={lang} href={canonical}/><link rel="alternate" hreflang={lang==='ja'?'en':'ja'} href={new URL(alternate,Astro.site)}/></>}<ThemeProvider/></head>
-<body class="bg-global-bg text-global-text mx-auto flex min-h-screen max-w-3xl flex-col px-4 pt-12 font-mono text-sm sm:px-8 sm:pt-16">
-<a class="sr-only focus:not-sr-only" href="#main">{ui[lang].skip}</a><Header lang={lang} alternate={alternate}/><main id="main"><slot/></main>
-<footer class="mt-auto flex flex-wrap justify-between gap-4 py-12 pt-24 text-xs text-muted"><span>© {new Date().getFullYear()} l4l4dev</span><div class="flex gap-4"><a href="https://github.com/l4l4dev">GitHub</a><a href={href(lang,'rss.xml')}>RSS</a><a href="https://github.com/chrismwilliams/astro-theme-cactus">Astro Cactus</a></div></footer>
-</body></html>
+<body class="bg-global-bg text-global-text"><div class="pure-gradient" aria-hidden="true"></div><div class="pure-shell">
+<a class="sr-only focus:not-sr-only" href="#main">{ui[lang].skip}</a><Header lang={lang} alternate={alternate}/><main id="main" class="pure-main"><slot/></main>
+<footer class="pure-footer"><span>© {new Date().getFullYear()} l4l4dev</span><div><a href="https://github.com/l4l4dev">GitHub</a><a href={href(lang,'rss.xml')}>RSS</a><a href="https://github.com/cworld1/astro-theme-pure">Astro Pure</a></div></footer>
+</div></body></html>

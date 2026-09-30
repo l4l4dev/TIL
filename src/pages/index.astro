@@ -1,9 +1,6 @@
 ---
-import {getCollection} from 'astro:content';
-import {ui,href,type Locale} from '@/i18n';
 import Base from '@/layouts/Base.astro';
-import PostList from '@/components/PostList.astro';
-const lang:Locale="ja"; const t=ui[lang];
-const posts=(await getCollection('post',({data})=>!data.draft&&data.lang===lang)).sort((a,b)=>b.data.publishDate.valueOf()-a.data.publishDate.valueOf());
+import Home from '@/components/Home.astro';
+import {ui} from '@/i18n';
 ---
-<Base lang={lang} title={t.home}><section><h1 class="title">{t.intro}</h1><p class="mt-6 prose-copy">{t.description}</p></section><section class="mt-16"><h2 class="title text-accent mb-6 text-xl"><a href={href(lang,'posts/')}>{t.recent}</a></h2>{posts.length ? <PostList posts={posts.slice(0,10)} lang={lang}/> : <p>{t.empty}</p>}</section></Base>
+<Base lang="ja" title={ui.ja.home}><Home lang="ja"/></Base>

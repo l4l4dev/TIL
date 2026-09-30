@@ -1,6 +1,6 @@
 # TIL
 
-Astro Cactusをベースにした日本語・英語の個人ブログです。
+Astro Pureのレイアウトとスタイルをベースにした日本語・英語の個人ブログです。
 
 ## 開発
 
@@ -32,7 +32,9 @@ mainへのpushでビルド・公開、PRではビルドのみ実行します。
 
 ## Theme
 
-[Astro Cactus](https://github.com/chrismwilliams/astro-theme-cactus)
+[Astro Pure](https://github.com/cworld1/astro-theme-pure)
+
+Pure v4.1.6のホーム・レイアウト・カラートークンを既存の日英記事ルートへ組み込んでいます。テーマ全体のデモ機能（コメント等）は導入していません。ライセンスと変更記録は `licenses/` にあります。
 upstream: `728f1f4eeb80208398649261d7635f311cafa011`。
 CactusのCSS・ロゴ・テーマ切替を使用し、多言語ルートと日本語本文フォントを追加しています。
 テーマのMITライセンスはLICENSEに保持しています。記事の著作権は著者に帰属します。
