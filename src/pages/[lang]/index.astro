@@ -1,0 +1,10 @@
+---
+import {getCollection} from 'astro:content';
+import {locales,ui,href,type Locale} from '@/i18n';
+import Base from '@/layouts/Base.astro';
+import PostList from '@/components/PostList.astro';
+export function getStaticPaths(){return locales.map(lang=>({params:{lang}}));}
+const lang=Astro.params.lang as Locale; const t=ui[lang];
+const posts=(await getCollection('post',({data})=>!data.draft&&data.lang===lang)).sort((a,b)=>b.data.publishDate.valueOf()-a.data.publishDate.valueOf());
+---
+<Base lang={lang} title={t.home}><section><h1 class="title">{t.intro}</h1><p class="mt-6 prose-copy">{t.description}</p></section><section class="mt-16"><h2 class="title text-accent mb-6 text-xl"><a href={href(lang,'posts/')}>{t.recent}</a></h2>{posts.length ? <PostList posts={posts.slice(0,10)} lang={lang}/> : <p>{t.empty}</p>}</section></Base>
