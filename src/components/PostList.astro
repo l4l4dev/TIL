@@ -1,0 +1,6 @@
+---
+import {postHref,type Locale} from '@/i18n';
+import type {CollectionEntry} from 'astro:content';
+const {posts,lang}=Astro.props as {posts:CollectionEntry<'post'>[];lang:Locale};
+---
+<ul class="space-y-6" role="list">{posts.map(post=><li class="grid gap-2 sm:grid-cols-[8rem_1fr]"><time class="text-muted text-xs pt-1" datetime={post.data.publishDate.toISOString()}>{post.data.publishDate.toLocaleDateString(lang,{year:'numeric',month:'short',day:'numeric',timeZone:'Asia/Tokyo'})}</time><div><a class="text-accent cactus-link text-base" href={postHref(post)}>{post.data.title}</a><p class="mt-2 text-muted text-sm prose-copy">{post.data.description}</p><span class="text-muted text-xs">{post.data.tags.join(' · ')}</span></div></li>)}</ul>

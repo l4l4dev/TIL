@@ -1,18 +1,40 @@
-# Today I Learned (TIL)
+# TIL
 
-This is a collection of things I've learned day to day across various technologies and subjects.
+Astro Cactusをベースにした日本語・英語の個人ブログです。
 
-## Categories
+## 開発
 
-- [Hugo](#hugo)
-- [Git](#git)
-- [Programming](#programming)
-- [Other](#other)
+Node.js 24を使います。
 
-## About
+```sh
+npm ci
+npm run dev
+npm run check
+npm run build
+```
 
-This repository is built with [Hugo](https://gohugo.io/) and contains my learning notes and discoveries.
+開発URL: `http://localhost:4321/TIL/ja/` または `/TIL/en/`。
 
-## License
+## 記事
 
-© 2025 l4l4dev
+`content/posts/ja/` と `content/posts/en/` にMarkdownを置きます。
+必須フィールド: `title`, `description`, `lang`, `translationKey`, `publishDate`。
+同じ記事の翻訳は同じ `translationKey` を使います。各言語内で重複させないでください。
+`draft: true` の記事は一覧・URL・RSSから除外されます。welcome記事は表示例の下書きです。
+翻訳がない記事では言語切替は相手言語の記事一覧へ移動します。
+既存の英語記事2本は内容を保持して移行しました。
+
+## 公開
+
+GitHub Settings → Pages → SourceをGitHub Actionsに設定します。
+mainへのpushでビルド・公開、PRではビルドのみ実行します。
+PrivateリポジトリのPages利用可否はGitHubの契約プランによります。公開範囲・料金の設定を確認してからマージしてください。
+リポジトリの公開設定はこの変更では変更しません。
+
+## Theme
+
+[Astro Cactus](https://github.com/chrismwilliams/astro-theme-cactus)
+upstream: `728f1f4eeb80208398649261d7635f311cafa011`。
+CactusのCSS・ロゴ・テーマ切替を使用し、多言語ルートと日本語本文フォントを追加しています。
+テーマのMITライセンスはLICENSEに保持しています。記事の著作権は著者に帰属します。
+旧Hugo構成は `archive/hugo` ブランチにあります。

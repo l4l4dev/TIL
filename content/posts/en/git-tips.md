@@ -1,6 +1,9 @@
 ---
 title: "Useful Git Tips and Tricks"
-date: 2025-04-03T09:30:00+09:00
+publishDate: 2025-04-03T09:30:00+09:00
+lang: en
+translationKey: git-tips
+description: "Useful Git commands and workflows."
 draft: false
 categories: ["Development"]
 tags: ["git", "version-control", "productivity"]

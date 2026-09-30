@@ -1,6 +1,9 @@
 ---
 title: "Getting Started with Hugo"
-date: 2025-04-03T08:00:00+09:00
+publishDate: 2025-04-03T08:00:00+09:00
+lang: en
+translationKey: first-post
+description: "Getting started with Hugo — an original TIL note."
 draft: false
 categories: ["Tech"]
 tags: ["hugo", "static-site", "blog"]
