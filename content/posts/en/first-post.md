@@ -9,7 +9,6 @@ categories: ["Tech"]
 tags: ["hugo", "static-site", "blog"]
 ---
 
-# Getting Started with Hugo
 
 Today I learned how to set up a Hugo blog for keeping track of my daily learnings. Hugo is a fast and flexible static site generator built in Go.
 
@@ -23,16 +22,12 @@ Today I learned how to set up a Hugo blog for keeping track of my daily learning
 ## Basic Hugo Commands
 
 ```bash
-# Create a new site
 hugo new site mysite
 
-# Create a new post
 hugo new posts/my-post.md
 
-# Start the local development server
 hugo server -D
 
-# Build the site
 hugo
 ```
 
