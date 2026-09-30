@@ -20,9 +20,9 @@ npm run build
 `content/posts/ja/` と `content/posts/en/` にMarkdownを置きます。
 必須フィールド: `title`, `description`, `lang`, `translationKey`, `publishDate`。
 同じ記事の翻訳は同じ `translationKey` を使います。各言語内で重複させないでください。
-`draft: true` の記事は一覧・URL・RSSから除外されます。welcome記事は表示例の下書きです。
+`draft: true` の記事は一覧・URL・RSSから除外されます。
 翻訳がない記事では言語切替は相手言語の記事一覧へ移動します。
-既存の英語記事2本は内容を保持して移行しました。
+記事はまだありません。各言語のディレクトリに新しいMarkdownを追加してください。
 
 ## 公開
 
