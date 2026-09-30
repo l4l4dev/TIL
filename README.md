@@ -22,7 +22,7 @@ npm run build
 同じ記事の翻訳は同じ `translationKey` を使います。各言語内で重複させないでください。
 `draft: true` の記事は一覧・URL・RSSから除外されます。
 翻訳がない記事では言語切替は相手言語の記事一覧へ移動します。
-記事はまだありません。各言語のディレクトリに新しいMarkdownを追加してください。
+各言語のディレクトリにMarkdownを追加してください。
 
 ## 公開
 
@@ -35,9 +35,8 @@ mainへのpushでビルド・公開、PRではビルドのみ実行します。
 [Astro Pure](https://github.com/cworld1/astro-theme-pure)
 
 Pure v4.1.6のホーム・レイアウト・カラートークンを既存の日英記事ルートへ組み込んでいます。テーマ全体のデモ機能（コメント等）は導入していません。ライセンスと変更記録は `licenses/` にあります。
-upstream: `728f1f4eeb80208398649261d7635f311cafa011`。
-CactusのCSS・ロゴ・テーマ切替を使用し、多言語ルートと日本語本文フォントを追加しています。
-テーマのMITライセンスはLICENSEに保持しています。記事の著作権は著者に帰属します。
+Pure upstream: `4ecd4762e1e750daf7a51978092d7cea8e14c0d6`。
+旧Cactus由来のテーマ切替・記事用CSSも一部残しています。CactusのMITライセンスはLICENSE、PureのApache-2.0ライセンスはlicenses/に保持しています。記事の著作権は著者に帰属します。
 旧Hugo構成は `archive/hugo` ブランチにあります。
 
 ## 開発方針
