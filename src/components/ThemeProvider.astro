@@ -1,48 +1,21 @@
-{/* Inlined to avoid FOUC. This is a parser blocking script. */}
+{/* Apply the theme before first paint. Only manual choices are persisted. */}
 <script is:inline>
-	const lightModePref = window.matchMedia("(prefers-color-scheme: light)");
-
-	function getUserPref() {
-		const storedTheme = typeof localStorage !== "undefined" && localStorage.getItem("theme");
-		return storedTheme || (lightModePref.matches ? "light" : "dark");
-	}
-
-	function setTheme(newTheme) {
-		if (newTheme !== "light" && newTheme !== "dark") {
-			return console.warn(
-				`Invalid theme value '${newTheme}' received. Expected 'light' or 'dark'.`,
-			);
-		}
-
-		const root = document.documentElement;
-
-		// root already set to newTheme, exit early
-		if (newTheme === root.getAttribute("data-theme")) {
-			return;
-		}
-
-		root.setAttribute("data-theme", newTheme);
-
-		if (typeof localStorage !== "undefined") {
-			localStorage.setItem("theme", newTheme);
-		}
-	}
-
-	// initial setup
-	setTheme(getUserPref());
-
-	// listen for pageshow event, browser restored page from bfcache
-	window.addEventListener("pageshow", (e) => {
-		if (e.persisted) {
-			setTheme(getUserPref());
-		}
-	});
-
-	// listen for theme-change custom event, fired in src/components/ThemeToggle.astro
-	document.addEventListener("theme-change", (e) => {
-		setTheme(e.detail.theme);
-	});
-
-	// listen for prefers-color-scheme change.
-	lightModePref.addEventListener("change", (e) => setTheme(e.matches ? "light" : "dark"));
+ const lightModePref = window.matchMedia('(prefers-color-scheme: light)');
+ function storedTheme() {
+  try { const value = localStorage.getItem('til:manual-theme:v1'); return value === 'light' || value === 'dark' ? value : null; }
+  catch { return null; }
+ }
+ let manualTheme = storedTheme();
+ function applyTheme(theme) { document.documentElement.setAttribute('data-theme', theme); }
+ function applyPreference() { applyTheme(manualTheme || (lightModePref.matches ? 'light' : 'dark')); }
+ applyPreference();
+ window.addEventListener('pageshow', (event) => { if (event.persisted) { manualTheme = storedTheme() || manualTheme; applyPreference(); } });
+ document.addEventListener('theme-change', (event) => {
+  const theme = event.detail.theme;
+  if (theme !== 'light' && theme !== 'dark') return;
+  manualTheme = theme;
+  try { localStorage.setItem('til:manual-theme:v1', theme); } catch {}
+  applyTheme(theme);
+ });
+ lightModePref.addEventListener('change', () => { if (!manualTheme) applyPreference(); });
 </script>
