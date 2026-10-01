@@ -77,17 +77,7 @@ B の worktree で `git stash list` を見ると、残っているのは A の�
 
 ブランチは worktree ごとに分かれているので、自分のブランチに積んだコミットを他の worktree が取り出すことはありません。WIP コミットは PR にする前にまとめ直します。
 
-どうしても stash の形で持ちたいなら、worktree ごとに分かれる `refs/worktree/` の下に置く手もあります。`git stash create` は退避のコミットを作るだけで、`refs/stash` には積みません。
-
-```sh
-c=$(git stash create "A の退避")
-git update-ref refs/worktree/wip "$c"
-git reset --hard
-# ...作業...
-git stash apply refs/worktree/wip
-```
-
-別の worktree から `git rev-parse refs/worktree/wip` を引いても見つかりませんでした。ただ、これをエージェントに毎回正しく書かせるより、「stash を使わない」と決めた方が単純なので、こちらは使っていません。
+worktree ごとに分かれる `refs/worktree/` の下に自分で ref を作って、退避のコミットを置く手もあります。ただ、保存に失敗したときや同じ名前で 2 回退避したときの扱いまで、エージェントに毎回正しく書かせるのは手間です。「stash を使わない」と決めた方が単純なので、こちらは使っていません。
 
 ## 入れ替わったら、worktree の持ち主に戻させる
 

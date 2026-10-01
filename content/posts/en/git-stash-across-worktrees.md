@@ -77,17 +77,7 @@ The git section of every instruction I give to a worker agent now includes this 
 
 Branches are separate per worktree, so no other worktree will pop a commit on your branch. WIP commits are squashed before the PR.
 
-If you really want stash-shaped entries, you can keep them under `refs/worktree/`, which is per-worktree. `git stash create` makes the stash commit without pushing it onto `refs/stash`:
-
-```sh
-c=$(git stash create "A's stash")
-git update-ref refs/worktree/wip "$c"
-git reset --hard
-# ...work...
-git stash apply refs/worktree/wip
-```
-
-Running `git rev-parse refs/worktree/wip` from another worktree did not find it. I don't use this, though. Saying "don't use stash" is simpler than getting an agent to write these steps correctly every time.
+You could also create your own ref under `refs/worktree/`, which is per-worktree, and keep the stash commit there. But getting an agent to handle a failed save, or a second stash under the same name, correctly every time takes effort. Saying "don't use stash" is simpler, so I don't use this.
 
 ## If changes swap, let the owner restore them
 
