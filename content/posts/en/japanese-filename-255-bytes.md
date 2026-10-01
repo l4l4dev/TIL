@@ -12,13 +12,17 @@ I build [FirnPlanner](https://github.com/l4l4dev/FirnPlanner), a daily planner f
 
 One day an AI code review (Codex) left a P1 comment. The filename of a new task was 272 bytes long, too long for Linux. On my Mac, creating and committing the file had worked without any complaint, so I had no idea until the review said so.
 
-## Codex's comment: git status fails on a Linux checkout
+## Codex's comment: a Linux checkout cannot create the file
 
 The core of the comment:
 
 > This new filename component is 272 UTF-8 bytes, exceeding the 255-byte `NAME_MAX` used by common filesystems such as ext4. A fresh checkout therefore cannot materialize the task file, and even the current Linux checkout makes `git status` fail with `File name too long`
 
-Codex reviews in a Linux environment. A fresh clone cannot create that file, and even an existing checkout fails on `git status`. CI such as GitHub Actions, or a contributor working on Linux, would hit the same thing.
+The review environment this time was Linux. The comment says a fresh clone cannot create the file, and that even an existing checkout fails on `git status` with `File name too long`.
+
+The "fails" part about `git status` turned out not to be accurate. This was checked on Linux (Git 2.43 and 2.51) during the review of this post's PR. With an over-255-byte name in the index, `git status --short` printed `File name too long` to stderr but still exited with 0. What exits with 1 and stops is an operation that creates files, such as `git checkout-index -a` or a clone.
+
+So what CI such as GitHub Actions, or a contributor working on Linux, runs into is a failed checkout. If you only look at the exit code of `git status`, you may not notice the problem at all.
 
 ## APFS allows 255 characters, Linux allows 255 bytes
 
@@ -43,7 +47,7 @@ For a Backlog.md task, `task-NNN - ` and `.md` take about 15 bytes, so a Japanes
 
 Git does not check filename length. When I created a file with a 276-byte name, `git add` and `git commit` both went through as usual. GitHub accepts the push too. Things break only when someone checks out that commit on Linux.
 
-If you only work on your own Mac, you never see the problem. This time it surfaced because an AI reviewer running on Linux checked the branch out.
+If you only work on your own Mac, you never see the problem. This time it surfaced because the review environment was Linux.
 
 ## Count the bytes before committing
 

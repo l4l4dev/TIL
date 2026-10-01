@@ -12,13 +12,17 @@ draft: false
 
 ある日、AI のコードレビュー (Codex) から P1 の指摘が付きました。新しく足したタスクのファイル名が 272 バイトあり、Linux では扱えないという内容です。手元の Mac では作るのもコミットするのも普通にできていたので、言われるまで気づきませんでした。
 
-## Codex の指摘: Linux の checkout で git status が落ちる
+## Codex の指摘: Linux の checkout でファイルを作れない
 
 指摘の要点はこうでした。
 
 > This new filename component is 272 UTF-8 bytes, exceeding the 255-byte `NAME_MAX` used by common filesystems such as ext4. A fresh checkout therefore cannot materialize the task file, and even the current Linux checkout makes `git status` fail with `File name too long`
 
-Codex のレビュー環境は Linux です。新しく clone してもそのファイルは作れず、既にある checkout でも `git status` が `File name too long` で失敗する、と書かれています。GitHub Actions のような CI や、Linux で作業するコントリビューターの手元でも、同じことが起きるはずです。
+今回のレビュー環境は Linux でした。新しく clone してもそのファイルは作れない、既にある checkout でも `git status` が `File name too long` で失敗する、と書かれています。
+
+ただし、`git status` が「失敗する」は正確ではありませんでした。この記事の PR のレビューで、Linux (Git 2.43 と 2.51) で確かめてもらった結果です。255 バイトを超える名前が index に入った状態で `git status --short` を実行すると、`File name too long` が stderr に出ても終了コードは 0 でした。終了コードが 1 になって止まるのは、`git checkout-index -a` や clone のように、ファイルを作る操作の方です。
+
+なので、GitHub Actions のような CI や、Linux で作業するコントリビューターの手元で起きるのは、checkout の失敗です。`git status` の終了コードだけを見ていると、問題に気づけないこともあります。
 
 ## APFS は 255 文字、Linux は 255 バイトまで
 
@@ -43,7 +47,7 @@ Backlog.md のタスクでいうと、`task-NNN - ` と `.md` で 15 バイト�
 
 git はファイル名の長さを確かめません。手元で 276 バイトの名前のファイルを作ってみると、`git add` も `git commit` もそのまま通りました。push しても GitHub は受け取ります。壊れるのは、そのコミットを Linux で checkout したときです。
 
-自分の Mac だけで作業していると、この問題はずっと見えません。今回は、Linux で動く AI のレビューが checkout してくれたので見つかりました。
+自分の Mac だけで作業していると、この問題はずっと見えません。今回は、レビューの環境が Linux だったので見つかりました。
 
 ## コミットの前にバイト数を数える
 
