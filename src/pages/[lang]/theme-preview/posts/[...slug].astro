@@ -1,0 +1,10 @@
+---
+import {getCollection,render} from 'astro:content';
+import {href,ui} from '@/i18n';
+import Base from '@/themes/fieldnotes/Layout.astro';
+import CodeTools from '@/components/CodeTools.astro';
+export async function getStaticPaths(){const posts=await getCollection('post',({data})=>!data.draft);return posts.map(post=>({params:{lang:post.data.lang,slug:post.id.split('/').slice(1).join('/')},props:{post,translation:posts.find(p=>p.data.lang!==post.data.lang&&p.data.translationKey===post.data.translationKey)}}));}
+const {post,translation}=Astro.props;const lang=post.data.lang;const {Content,headings}=await render(post);
+const sections=headings.filter(heading=>heading.depth===2);
+---
+<Base lang={lang} title={post.data.title} article alternate={translation?href(translation.data.lang,`theme-preview/posts/${translation.id.split('/').slice(1).join('/')}/`):href(lang==='ja'?'en':'ja','theme-preview/')}><div class="reading-page"><a class="back" href={href(lang,'theme-preview/')}>← {ui[lang].back}</a><header class="article-header"><p class="eyebrow">Field notes</p><h1 class="article-title">{post.data.title}</h1><time class="text-muted text-xs" datetime={post.data.publishDate.toISOString()}>{post.data.publishDate.toLocaleDateString(lang,{timeZone:'Asia/Tokyo'})}</time></header>{!translation&&<p class="mt-4 text-muted text-xs">{ui[lang].missing}</p>}{sections.length>2 && <details class="article-toc" open><summary>{lang==='ja'?'この記事の内容':'On this page'}</summary><nav aria-label={lang==='ja'?'記事の目次':'Table of contents'}><ol>{sections.map(heading=><li><a href={`#${heading.slug}`}>{heading.text}</a></li>)}</ol></nav></details>}<article class="prose prose-copy reading-body" data-pagefind-body><Content/></article><CodeTools/></div></Base>

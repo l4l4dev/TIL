@@ -1,0 +1,12 @@
+---
+import {getCollection} from 'astro:content';
+import {locales,href,ui,type Locale} from '@/i18n';
+import Layout from '@/themes/fieldnotes/Layout.astro';
+export function getStaticPaths(){return locales.map(lang=>({params:{lang}}));}
+const lang=Astro.params.lang as Locale;
+const posts=(await getCollection('post',p=>p.data.lang===lang&&!p.data.draft)).sort((a,b)=>b.data.publishDate.valueOf()-a.data.publishDate.valueOf());
+---
+<Layout lang={lang} title="Notes" alternate={href(lang==='ja'?'en':'ja','theme-preview/')}>
+<section class="hero"><div class="hero-photo" aria-hidden="true"></div><div class="hero-inner"><img class="avatar" src="https://l4l4dev.github.io/images/author/DSC02380_hu14406385835224895564.jpg" alt="l4l4dev" width="82" height="82"/><div><p class="eyebrow">Notes from l4l4dev</p><h1>{lang==='ja'?'つくる日々の、覚え書き。':'Notes from the things I build.'}</h1><p class="hero-description">{lang==='ja'?'開発で試したこと、チームで考えたこと。':'Experiments in development. Thoughts on working together.'}<br/>{lang==='ja'?'手を動かして分かったことを、ここに残しています。':'A place to keep what I learn along the way.'}</p></div></div></section>
+<section id="posts" class="index-content"><div class="section-heading"><h2>{ui[lang].posts}</h2><span>{posts.length} {lang==='ja'?'件の記録':'notes'}</span></div><ol class="post-list">{posts.map(p=><li class="post-row"><time datetime={p.data.publishDate.toISOString()}>{p.data.publishDate.toLocaleDateString('en-CA',{timeZone:'Asia/Tokyo'})}</time><div><h3><a href={href(lang,`theme-preview/posts/${p.id.split('/').slice(1).join('/')}/`)}>{p.data.title}</a></h3><p>{p.data.description}</p><div class="tags">{p.data.tags.map(t=><span>{t}</span>)}</div></div><span class="row-arrow" aria-hidden="true">↗</span></li>)}</ol><p class="index-note">{lang==='ja'?'試作テーマのプレビューです。':'An experimental theme preview.'} <a href={href(lang)}>{lang==='ja'?'現在のブログを見る →':'View the current blog →'}</a></p></section>
+</Layout>

@@ -1,0 +1,9 @@
+---
+import {href,ui,type Locale} from '@/i18n';
+import './theme.css';
+interface Props {lang:Locale; title:string; alternate:string; article?:boolean;}
+const {lang,title,alternate,article=false}=Astro.props;
+const home=href(lang,'theme-preview/');
+---
+<html lang={lang}><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width"/><meta name="robots" content="noindex,nofollow"/><title>{title} · l4l4dev</title></head>
+<body><a class="skip" href="#main">{ui[lang].skip}</a><header class="site-header"><div class="header-inner"><a class="wordmark" href={home}>l4l4dev<span> / notes</span></a><nav aria-label={lang==='ja'?'ナビゲーション':'Navigation'}><a href={`${home}#posts`}>{ui[lang].posts}</a><a href="https://l4l4dev.github.io/">Profile ↗</a><a class="locale" href={alternate}>{lang==='ja'?'EN':'日本語'}</a></nav></div></header><main id="main" class:list={{'article-main':article}}><slot/></main><footer><span>© {new Date().getFullYear()} l4l4dev</span><div><a href="https://github.com/l4l4dev">GitHub ↗</a><a href={href(lang,'rss.xml')}>RSS</a><a href={href(lang)}>TIL</a></div></footer></body></html>
