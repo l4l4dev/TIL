@@ -4,7 +4,7 @@ description: 'エディタの装飾計算を速くする変更で、既存テス
 lang: ja
 translationKey: swift-regex-digit-and-diff-both-versions
 publishDate: 2026-10-01
-tags: ['Swift', 'テスト', 'AI']
+tags: ['Swift', 'Testing', 'AI']
 draft: false
 ---
 
