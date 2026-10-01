@@ -6,3 +6,4 @@
 - Check available review feedback before finalizing changes; address valid findings or record why they are inapplicable.
 - Run npm run check and npm run build for code changes; validate affected behavior in a browser.
 - Keep Japanese and English routes and /TIL/ base paths working.
+- Use the same English tag names and ordering for Japanese and English posts with the same translationKey. Reuse existing tag names rather than translating them.
