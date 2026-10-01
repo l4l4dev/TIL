@@ -39,6 +39,8 @@ The comments from an AI code review (Codex) pointed the same way every time: kee
 
 ## Undo only when the file is exactly as the move left it
 
+![Restore Inbox if it matches the post-move state; otherwise write nothing, stop undo, and explain why](/TIL/images/inbox-undo-check-en.svg)
+
 After the fourth round, I stopped trying to find the line. The app remembers the whole Inbox from before and after the move. When undoing, if the current Inbox matches the state right after the move without a single character of difference, it goes back to the state before the move. If not, it changes nothing and steps out. It then shows this message (the app's Japanese text, shown here in English):
 
 > Couldn't undo because Inbox has changed. Nothing was changed.

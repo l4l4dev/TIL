@@ -20,6 +20,8 @@ draft: false
 
 ## refs/stash はリポジトリで共有される
 
+![worktree A と B は refs/stash を共有し、A で pop すると最後に退避した B の変更が適用される](/TIL/images/shared-stash-ja.svg)
+
 `git help worktree` の REFS の節に、そのまま書いてあります。
 
 > In general, all pseudo refs are per-worktree and all refs starting with refs/ are shared. (中略) There are exceptions, however: refs inside refs/bisect, refs/worktree and refs/rewritten are not shared.

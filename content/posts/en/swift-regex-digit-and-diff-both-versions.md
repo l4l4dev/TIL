@@ -52,6 +52,8 @@ There are two ways to fix it: send only the lines that contain non-ASCII digits 
 
 ## Diff two versions with SwiftPM path dependencies
 
+![Run both versions on identical inputs, dump every output field, and compare the files with diff](/TIL/images/compare-outputs-en.svg)
+
 Generalized, the procedure looks like this. Put the version before and the version after in separate directories.
 
 ```text

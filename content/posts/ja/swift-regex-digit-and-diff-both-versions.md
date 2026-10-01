@@ -52,6 +52,8 @@ for (name, r) in [("\\d", a), ("[0-9]", b), ("\\d + asciiOnlyDigits()", c)] {
 
 ## 新旧の版を path dependency で並べて diff する
 
+![同じ入力を新旧の版に渡し、全項目の出力をファイルに保存して diff で比較する手順](/TIL/images/compare-outputs-ja.svg)
+
 検証の手順は、一般化するとこうなります。置き換える前と後を、別々のディレクトリに置きます。
 
 ```text

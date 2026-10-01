@@ -20,6 +20,8 @@ One worktree ended up with the other task's changes. I noticed when one agent tr
 
 ## refs/stash is shared by the whole repository
 
+![Worktrees A and B share refs/stash; popping in A applies the most recent stash, created in B](/TIL/images/shared-stash-en.svg)
+
 The REFS section of `git help worktree` says so directly:
 
 > In general, all pseudo refs are per-worktree and all refs starting with refs/ are shared. (...) There are exceptions, however: refs inside refs/bisect, refs/worktree and refs/rewritten are not shared.
