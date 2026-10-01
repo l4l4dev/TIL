@@ -125,7 +125,7 @@ The rewriting probably happened under XcodeGen as well. Back then `.xcodeproj` w
 
 What worried me was that the diff was not just formatting. The exception that removes `SnapshotTests` from the `Tests` folder (`exclusions` under `membership-exceptions`) was gone. Committing it might pull the snapshot test files into the unit test target as well. The first two times, I reverted to the version in git.
 
-## The exception was redundant. I built both versions and compared them
+## With or without the exception, the builds I compared did not differ
 
 There were two possible reasons Xcode dropped the exception. Either it saw the setting as redundant, because the same entry already lists `SnapshotTests` in `opaque-folders`, or a beta bug was discarding a meaningful setting.
 
@@ -136,20 +136,20 @@ I asked an agent to find out. It cloned the repository twice, kept the git versi
 | Files inside `FirnPlannerTests.xctest` | 36 | 36 (identical list) |
 | Size of the test binary | 83,685,136 bytes | 83,685,136 bytes |
 | Snapshot test symbols (`nm`) | 0 | 0 |
-| Full test suite | Passed | Passed |
+| Full test suite | Passed (run on main the same day) | Passed |
 
 Within what I compared, the results were the same. Neither bundle contained any SnapshotTests files, and both had zero snapshot test symbols.
 
 What follows is my interpretation. In the `Tests` folder entry, `SnapshotTests` is listed in `opaque-folders`. I think that is why, in this project and this configuration, the snapshot test sources stay out of FirnPlannerTests even without the exclusion. Xcode probably treated the exclusion as redundant and dropped it each time it re-saved. I have not checked Apple's documentation on how `opaque-folders` and exclusions interact in general.
 
-I only checked the macOS Debug configuration, Xcode 27.2 beta 2, and the FirnPlannerTests bundle. I did not compare the snapshot test target, the app bundle, the Release configuration, or Xcode 27.0.
+I only compared the macOS Debug configuration, Xcode 27.2 beta 2, and the FirnPlannerTests bundle. I did not compare the snapshot test target, the app bundle, the Release configuration, or Xcode 27.0.
 
-Based on this, **I made Xcode's version the canonical one in git.** Running `xcprojformatter` leaves it unchanged. An open Xcode should no longer produce this diff when an agent merges.
+**This time, I adopted Xcode's version as the canonical one in git based on that Debug / FirnPlannerTests comparison. The other scopes remain unverified.** I did confirm that running `xcprojformatter` leaves it unchanged. An open Xcode should no longer produce this diff when an agent merges.
 
 ## After editing project.xcproj by hand, open it in Xcode and look for a diff
 
 This added one step to my process. After editing `project.xcproj` by hand or with the CLI, I format it, open it in Xcode once, and confirm that Xcode's re-save produces no diff.
 
-When a diff appears, I don't adopt Xcode's form right away. The diff alone can't tell me whether the setting is merely redundant from Xcode's point of view or whether a bug in Xcode (especially a beta) is dropping a meaningful setting. Before adopting it, I list the targets and configurations the setting should affect, build both versions, and compare the outputs. Here, that means not only FirnPlannerTests but also the snapshot test target, the Release configuration, and the other Xcode version I use as a baseline. If nothing differs within that scope, I adopt Xcode's form and record what I compared and what I didn't. If something differs, I keep the git version and report it to Apple as a bug.
+From now on, when a diff appears, I won't adopt Xcode's form right away. The diff alone can't tell me whether the setting is merely redundant from Xcode's point of view or whether a bug in Xcode (especially a beta) is dropping a meaningful setting. Before adopting it, I will list the targets and configurations the setting should affect, build both versions, and compare the outputs. Applied to this case, the scope would include the snapshot test target, the Release configuration, and the other Xcode version I use as a baseline, in addition to FirnPlannerTests (I did not compare those this time). If nothing differs within that scope, I adopt Xcode's form and record what I compared and what I didn't. If something differs, I keep the git version and report it to Apple as a bug.
 
 Some things are still unchecked: whether adding a file through Xcode's UI saves the expected diff in `project.xcproj`, and whether the build passes on the Xcode version Xcode Cloud uses. Xcode 27.2 is still in beta, so the behavior may change in the release. I will update this post when I know more.
