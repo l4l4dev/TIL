@@ -4,7 +4,7 @@ description: 'Inbox の Markdown から日のページへ移したタスクを�
 lang: ja
 translationKey: undo-move-without-ids
 publishDate: 2026-10-01
-tags: ['設計', 'Markdown', 'AI']
+tags: ['Design', 'Markdown', 'AI']
 draft: false
 ---
 
