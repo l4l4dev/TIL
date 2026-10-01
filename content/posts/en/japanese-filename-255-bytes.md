@@ -20,7 +20,7 @@ The core of the comment:
 
 The review environment this time was Linux. The comment says a fresh clone cannot create the file, and that even an existing checkout fails on `git status` with `File name too long`.
 
-The "fails" part about `git status` turned out not to be accurate. This was checked on Linux (Git 2.43 and 2.51) during the review of this post's PR. With an over-255-byte name in the index, `git status --short` printed `File name too long` to stderr but still exited with 0. What exits with 1 and stops is an operation that creates files, such as `git checkout-index -a` or a clone.
+The "fails" part about `git status` turned out not to be accurate. This was checked on Linux (Git 2.43 and 2.51) during the review of this post's PR. With an over-255-byte name in the index, `git status --short` printed `File name too long` to stderr but still exited with 0. What failed were the operations that create files. `git checkout-index -a` exited with 1, and `git clone` fetched the objects, then printed `fatal: unable to checkout working tree` and exited with 128. Both failed at the checkout.
 
 So what CI such as GitHub Actions, or a contributor working on Linux, runs into is a failed checkout. If you only look at the exit code of `git status`, you may not notice the problem at all.
 

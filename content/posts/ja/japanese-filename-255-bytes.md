@@ -20,7 +20,7 @@ draft: false
 
 今回のレビュー環境は Linux でした。新しく clone してもそのファイルは作れない、既にある checkout でも `git status` が `File name too long` で失敗する、と書かれています。
 
-ただし、`git status` が「失敗する」は正確ではありませんでした。この記事の PR のレビューで、Linux (Git 2.43 と 2.51) で確かめてもらった結果です。255 バイトを超える名前が index に入った状態で `git status --short` を実行すると、`File name too long` が stderr に出ても終了コードは 0 でした。終了コードが 1 になって止まるのは、`git checkout-index -a` や clone のように、ファイルを作る操作の方です。
+ただし、`git status` が「失敗する」は正確ではありませんでした。この記事の PR のレビューで、Linux (Git 2.43 と 2.51) で確かめてもらった結果です。255 バイトを超える名前が index に入った状態で `git status --short` を実行すると、`File name too long` が stderr に出ても終了コードは 0 でした。失敗したのは、ファイルを作る操作の方です。`git checkout-index -a` は終了コード 1 で終わりました。`git clone` はオブジェクトを取得したあと `fatal: unable to checkout working tree` を出し、終了コード 128 で終わりました。どちらも checkout の段階で失敗しています。
 
 なので、GitHub Actions のような CI や、Linux で作業するコントリビューターの手元で起きるのは、checkout の失敗です。`git status` の終了コードだけを見ていると、問題に気づけないこともあります。
 
