@@ -4,7 +4,7 @@ description: 'タイムラインのブロックの色を作り直したとき、
 lang: ja
 translationKey: orange-muddy-g-r-ratio
 publishDate: 2026-10-01
-tags: ['デザイン', '色', 'macOS']
+tags: ['Design', 'Color', 'macOS']
 draft: false
 ---
 
