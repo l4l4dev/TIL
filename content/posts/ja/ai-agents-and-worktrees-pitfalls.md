@@ -8,7 +8,7 @@ tags: ['Git', 'git worktree', 'Xcode', 'AI', 'Claude Code']
 draft: false
 ---
 
-[前回の記事](/TIL/ja/posts/git-stash-across-worktrees/)では、`git stash` が worktree をまたいで 1 本しかないせいで、エージェント同士の変更が入れ替わった話を書きました。個人で作っている macOS の1日プランナー [FirnPlanner](https://github.com/l4l4dev/FirnPlanner) では、Claude Code のサブエージェントを並行で動かしています。1 本ごとに git worktree を分けています。この運用では、stash のほかにも踏んだ落とし穴がいくつかありました。短い節で、起きたこと、理由、いまの対処を順に書きます。
+[前回の記事](/TIL/ja/posts/git-stash-across-worktrees/)では、`git stash` が worktree をまたいで 1 本しかないせいで、エージェント同士の変更が入れ替わった話を書きました。個人で作っている macOS の1日プランナー [FirnPlanner](https://firnplanner.l4l4.dev/) では、Claude Code のサブエージェントを並行で動かしています。1 本ごとに git worktree を分けています。この運用では、stash のほかにも踏んだ落とし穴がいくつかありました。短い節で、起きたこと、理由、いまの対処を順に書きます。
 
 ## worktree は起動した時点の main から切られるので、PR の前に載せ直す
 

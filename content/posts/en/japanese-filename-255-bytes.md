@@ -8,7 +8,7 @@ tags: ['Git', 'macOS', 'Linux', 'AI']
 draft: false
 ---
 
-I build [FirnPlanner](https://github.com/l4l4dev/FirnPlanner), a daily planner for macOS, as a personal project, and I track its tasks with [Backlog.md](https://github.com/MrLesk/Backlog.md). Each task is one Markdown file named `task-NNN - <title>.md`. The title goes into the filename almost as is, with spaces and a few symbols replaced.
+I build [FirnPlanner](https://firnplanner.l4l4.dev/), a daily planner for macOS, as a personal project, and I track its tasks with [Backlog.md](https://github.com/MrLesk/Backlog.md). Each task is one Markdown file named `task-NNN - <title>.md`. The title goes into the filename almost as is, with spaces and a few symbols replaced.
 
 One day an AI code review (Codex) left a P1 comment. The filename of a new task was 272 bytes long, too long for Linux. On my Mac, creating and committing the file had worked without any complaint, so I had no idea until the review said so.
 

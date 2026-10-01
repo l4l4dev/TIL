@@ -8,7 +8,7 @@ tags: ['macOS', 'Swift', 'FSEvents']
 draft: false
 ---
 
-I build [FirnPlanner](https://github.com/l4l4dev/FirnPlanner), a daily planner for macOS, as a personal project. The Markdown files in a folder the user picks are the source of truth: each day plan and the inbox is a plain file under that folder. When an outside editor or a sync tool changes a file, the app has to read it again.
+I build [FirnPlanner](https://firnplanner.l4l4.dev/), a daily planner for macOS, as a personal project. The Markdown files in a folder the user picks are the source of truth: each day plan and the inbox is a plain file under that folder. When an outside editor or a sync tool changes a file, the app has to read it again.
 
 The part that notices those changes uses FSEvents. DispatchSource is the first thing most people reach for, and I do not use it. Here is why, as far as a small experiment let me confirm.
 

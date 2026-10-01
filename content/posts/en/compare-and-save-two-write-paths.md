@@ -8,7 +8,7 @@ tags: ['Swift', 'macOS', 'Design']
 draft: false
 ---
 
-I build [FirnPlanner](https://github.com/l4l4dev/FirnPlanner), a daily planner for macOS, as a personal project. It treats Markdown files in a folder the user chooses as the source of truth. There is one file per day, and users also open the same files in other editors.
+I build [FirnPlanner](https://firnplanner.l4l4.dev/), a daily planner for macOS, as a personal project. It treats Markdown files in a folder the user chooses as the source of truth. There is one file per day, and users also open the same files in other editors.
 
 So saving follows one rule: if the file changed outside the app, do not overwrite it. The save that keeps this rule ran into a race between two write paths. The conclusion is that I check a sequence number just before the write, and a stale request returns without writing.
 

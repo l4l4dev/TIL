@@ -8,7 +8,7 @@ tags: ['Design', 'Color', 'macOS']
 draft: false
 ---
 
-I build [FirnPlanner](https://github.com/l4l4dev/FirnPlanner), a daily planner for macOS, as a personal project. I recently redid the colors of its timeline, aiming to fill schedule blocks with a bright orange.
+I build [FirnPlanner](https://firnplanner.l4l4.dev/), a daily planner for macOS, as a personal project. I recently redid the colors of its timeline, aiming to fill schedule blocks with a bright orange.
 
 For a while I kept proposing orange candidates and rejecting them as "dirty" or "rotten". I could not tell what to fix, so I was just moving the color around. In the end I went looking for the cause. What follows is a record of how these colors looked to me, not a general rule.
 

@@ -8,7 +8,7 @@ tags: ['Git', 'git worktree', 'AI', 'Claude Code']
 draft: false
 ---
 
-I build [FirnPlanner](https://github.com/l4l4dev/FirnPlanner), a daily planner for macOS, as a personal project, and most of the implementation is done by an AI coding agent (Claude Code). Several worker agents run at the same time, each in its own git worktree. Each worktree has its own working tree and its own branch, so I assumed they could not get in each other's way.
+I build [FirnPlanner](https://firnplanner.l4l4.dev/), a daily planner for macOS, as a personal project, and most of the implementation is done by an AI coding agent (Claude Code). Several worker agents run at the same time, each in its own git worktree. Each worktree has its own working tree and its own branch, so I assumed they could not get in each other's way.
 
 `git stash` turned out to be the exception. Two agents stashed and popped at almost the same moment, and one agent's uncommitted changes showed up in the other agent's worktree.
 

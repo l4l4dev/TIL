@@ -8,7 +8,7 @@ tags: ['Swift', 'Testing', 'AI']
 draft: false
 ---
 
-I build [FirnPlanner](https://github.com/l4l4dev/FirnPlanner), a daily planner for macOS, as a personal project, and an AI coding agent writes most of the implementation. Recently I asked an agent to speed up the decoration calculation in the Markdown editor, with one condition: the output must not change by a single byte.
+I build [FirnPlanner](https://firnplanner.l4l4.dev/), a daily planner for macOS, as a personal project, and an AI coding agent writes most of the implementation. Recently I asked an agent to speed up the decoration calculation in the Markdown editor, with one condition: the output must not change by a single byte.
 
 The agent came back with all 241 existing tests passing. Then I had a different agent run the old and new versions and compare them, and it found inputs where the output differed.
 

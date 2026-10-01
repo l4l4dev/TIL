@@ -8,7 +8,7 @@ tags: ['Git', 'macOS', 'Linux', 'AI']
 draft: false
 ---
 
-個人で作っている macOS の1日プランナー [FirnPlanner](https://github.com/l4l4dev/FirnPlanner) では、タスク管理に [Backlog.md](https://github.com/MrLesk/Backlog.md) を使っています。タスクは 1 件 1 ファイルの Markdown で、ファイル名は `task-NNN - <題名>.md` の形になります。題名の空白などを置き換えただけの文字列が、そのままファイル名に入ります。
+個人で作っている macOS の1日プランナー [FirnPlanner](https://firnplanner.l4l4.dev/) では、タスク管理に [Backlog.md](https://github.com/MrLesk/Backlog.md) を使っています。タスクは 1 件 1 ファイルの Markdown で、ファイル名は `task-NNN - <題名>.md` の形になります。題名の空白などを置き換えただけの文字列が、そのままファイル名に入ります。
 
 ある日、AI のコードレビュー (Codex) から P1 の指摘が付きました。新しく足したタスクのファイル名が 272 バイトあり、Linux では扱えないという内容です。手元の Mac では作るのもコミットするのも普通にできていたので、言われるまで気づきませんでした。
 

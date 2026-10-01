@@ -8,7 +8,7 @@ tags: ['Xcode', 'XcodeGen', 'iOS', 'macOS', 'AI']
 draft: false
 ---
 
-I dropped XcodeGen from [FirnPlanner](https://github.com/l4l4dev/FirnPlanner), a daily planner for macOS that I build on my own (an iPhone version is in progress). Starting with Xcode 27.2, the inside of `.xcodeproj` is `project.xcproj` (JSON5) instead of `project.pbxproj` (a plist), and its diffs are readable. If the project file can live in git as is, there is nothing left to generate. Most of the implementation is done by AI coding agents, so getting rid of a "remember to regenerate" step that both people and agents forget was a big reason to switch.
+I dropped XcodeGen from [FirnPlanner](https://firnplanner.l4l4.dev/), a daily planner for macOS that I build on my own (an iPhone version is in progress). Starting with Xcode 27.2, the inside of `.xcodeproj` is `project.xcproj` (JSON5) instead of `project.pbxproj` (a plist), and its diffs are readable. If the project file can live in git as is, there is nothing left to generate. Most of the implementation is done by AI coding agents, so getting rid of a "remember to regenerate" step that both people and agents forget was a big reason to switch.
 
 The switch taught me one more thing. Once the project is in git, you can see an open Xcode re-saving the project file. One setting disappeared when it did, and I had to find out whether it mattered.
 

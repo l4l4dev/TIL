@@ -8,7 +8,7 @@ tags: ['Design', 'Markdown', 'AI']
 draft: false
 ---
 
-個人で作っている macOS の1日プランナー [FirnPlanner](https://github.com/l4l4dev/FirnPlanner) では、タスクを Markdown のファイルに書いて持っています。日付ごとに 1 ファイルあり、日付のない未整理のタスクは `Inbox.md` という 1 ファイルに入ります。
+個人で作っている macOS の1日プランナー [FirnPlanner](https://firnplanner.l4l4.dev/) では、タスクを Markdown のファイルに書いて持っています。日付ごとに 1 ファイルあり、日付のない未整理のタスクは `Inbox.md` という 1 ファイルに入ります。
 
 Inbox のタスクを日のページへ移す操作には、取り消しがあります。この取り消しで「移した 1 件」をどう指すかが決まらず、4 回やり直しました。結論は「移動が残した姿のままなら戻す。1 文字でも違えば何もせず、そう伝える」です。
 

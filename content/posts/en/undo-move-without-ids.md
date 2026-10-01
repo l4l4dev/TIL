@@ -8,7 +8,7 @@ tags: ['Design', 'Markdown', 'AI']
 draft: false
 ---
 
-I build [FirnPlanner](https://github.com/l4l4dev/FirnPlanner), a daily planner for macOS, as a personal project, and it keeps tasks in Markdown files. There is one file per day, and tasks without a date go into a single file called `Inbox.md`.
+I build [FirnPlanner](https://firnplanner.l4l4.dev/), a daily planner for macOS, as a personal project, and it keeps tasks in Markdown files. There is one file per day, and tasks without a date go into a single file called `Inbox.md`.
 
 Moving a task from the Inbox to a day page can be undone. How to point at "the one task that was moved" in that undo took four rewrites. The conclusion is: restore if the file is exactly as the move left it. If even one character differs, change nothing and say so.
 

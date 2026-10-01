@@ -8,7 +8,7 @@ tags: ['Xcode', 'XcodeGen', 'iOS', 'macOS', 'AI']
 draft: false
 ---
 
-個人で作っている macOS の1日プランナー [FirnPlanner](https://github.com/l4l4dev/FirnPlanner) (iPhone 版も開発中) で、XcodeGen をやめました。Xcode 27.2 から `.xcodeproj` の中身が `project.pbxproj` (plist) ではなく `project.xcproj` (JSON5) になり、差分を人が読めるようになったからです。プロジェクトファイルをそのまま git で持てば、生成の手間がまるごと無くなります。実装の大半を AI のエージェントに任せているので、人もエージェントも忘れがちな「生成し直す」手順を無くせることも、移った大きな理由です。
+個人で作っている macOS の1日プランナー [FirnPlanner](https://firnplanner.l4l4.dev/) (iPhone 版も開発中) で、XcodeGen をやめました。Xcode 27.2 から `.xcodeproj` の中身が `project.pbxproj` (plist) ではなく `project.xcproj` (JSON5) になり、差分を人が読めるようになったからです。プロジェクトファイルをそのまま git で持てば、生成の手間がまるごと無くなります。実装の大半を AI のエージェントに任せているので、人もエージェントも忘れがちな「生成し直す」手順を無くせることも、移った大きな理由です。
 
 移ってみると、もう一つ分かったことがありました。プロジェクトを git に入れると、開いている Xcode がプロジェクトファイルを保存し直していることが差分として見えるようになります。そのときに消える設定があったので、残すべきか確かめた話も書きます。
 

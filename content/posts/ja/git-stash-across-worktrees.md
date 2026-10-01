@@ -8,7 +8,7 @@ tags: ['Git', 'git worktree', 'AI', 'Claude Code']
 draft: false
 ---
 
-個人で作っている macOS の1日プランナー [FirnPlanner](https://github.com/l4l4dev/FirnPlanner) では、実装の大半を AI のコーディングエージェント (Claude Code) に任せています。作業用のエージェントは、それぞれ別の git worktree で同時に動きます。worktree ごとに作業ツリーもブランチも分かれるので、互いに干渉しないと思っていました。
+個人で作っている macOS の1日プランナー [FirnPlanner](https://firnplanner.l4l4.dev/) では、実装の大半を AI のコーディングエージェント (Claude Code) に任せています。作業用のエージェントは、それぞれ別の git worktree で同時に動きます。worktree ごとに作業ツリーもブランチも分かれるので、互いに干渉しないと思っていました。
 
 ところが `git stash` だけは分かれていませんでした。2 本のエージェントがほぼ同時に stash と pop をしたら、片方の未コミットの変更がもう片方の worktree に出てきました。
 
