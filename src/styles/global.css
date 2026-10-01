@@ -200,3 +200,21 @@ html[lang="en"] .reading-body {line-height:1.8;}
 .reading-body details {border:1px solid hsl(var(--border));border-radius:12px;padding:1rem;margin:1.5rem 0;}
 .reading-body details summary {cursor:pointer;font-size:.9rem;font-weight:500;}
 @media(max-width:640px){.reading-body{font-size:1rem;line-height:1.95}.reading-body h2{font-size:1.25rem;margin-top:2.5rem}.article-toc{padding:1rem}.reading-body pre{padding:1rem}.reading-body th,.reading-body td{padding:.65rem;min-width:6rem}}
+
+/* Code stays readable at article size, with optional wrapping for long lines. */
+.reading-body pre {font-size:.9375rem;line-height:1.8;tab-size:2;background:#f6f8fa !important;padding:1.1rem 1.25rem;margin:0;border:0;border-radius:0 0 12px 12px;}
+.reading-body pre code {font-size:inherit;line-height:inherit;padding:0;background:transparent;border:0;}
+.reading-body code::before,.reading-body code::after {content:none;}
+.reading-body .code-panel {border:1px solid hsl(var(--border));border-radius:12px;margin:1.8rem 0;overflow:hidden;}
+.code-toolbar {display:flex;align-items:center;gap:.6rem;justify-content:flex-end;padding:.55rem .85rem;background:hsl(var(--muted));border-bottom:1px solid hsl(var(--border));font:500 .75rem/1.5 var(--font-sans);}
+.code-language {margin-right:auto;color:hsl(var(--muted-foreground));text-transform:uppercase;letter-spacing:.06em;}
+.code-toolbar button {padding:.3rem .6rem;border:1px solid hsl(var(--border));border-radius:6px;cursor:pointer;background:hsl(var(--background));color:hsl(var(--foreground));}
+.code-toolbar button:hover,.code-toolbar button[aria-pressed="true"] {border-color:hsl(var(--primary));}
+.reading-body pre.code-wrap {white-space:pre-wrap;overflow-wrap:anywhere;}
+.reading-body .diff-remove {display:inline-block;min-width:100%;background:#ffebe9;}
+.reading-body .diff-add {display:inline-block;min-width:100%;background:#dafbe1;}
+html[data-theme="dark"] .reading-body pre {background:#20212c !important;}
+html[data-theme="dark"] .reading-body .diff-remove {background:#482b35;}
+html[data-theme="dark"] .reading-body .diff-add {background:#223e32;}
+html[data-theme="dark"] .reading-body pre .diff-remove span,html[data-theme="dark"] .reading-body pre .diff-add span {background:transparent !important;}
+@media(max-width:640px){.reading-body pre{font-size:.875rem;padding:1rem}.code-toolbar{gap:.4rem;padding:.5rem .65rem}}

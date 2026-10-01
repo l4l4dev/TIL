@@ -1,0 +1,42 @@
+<script>
+function enhanceCode() {
+  const ja = document.documentElement.lang.startsWith('ja');
+  document.querySelectorAll<HTMLPreElement>('.reading-body pre').forEach(pre => {
+    if (pre.parentElement?.classList.contains('code-panel')) return;
+    const raw = pre.querySelector('code')?.textContent ?? pre.textContent ?? '';
+    const diff = raw.split('\n').some(line => /^[-+] /.test(line));
+    const language = diff ? 'diff' : raw.trimStart().startsWith('{') ? 'JSON5' : 'code';
+    const panel = document.createElement('div');
+    panel.className = 'code-panel';
+    const toolbar = document.createElement('div');
+    toolbar.className = 'code-toolbar';
+    const label = document.createElement('span');
+    label.className = 'code-language'; label.textContent = language;
+    const wrap = document.createElement('button');
+    wrap.type = 'button'; wrap.textContent = ja ? '折り返し' : 'Wrap lines';
+    wrap.setAttribute('aria-pressed', 'false');
+    wrap.addEventListener('click', () => {
+      const active = pre.classList.toggle('code-wrap');
+      wrap.setAttribute('aria-pressed', String(active));
+    });
+    const copy = document.createElement('button');
+    copy.type = 'button'; copy.textContent = ja ? 'コピー' : 'Copy';
+    const status = document.createElement('span');
+    status.setAttribute('role', 'status');
+    copy.addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(raw); status.textContent = ja ? 'コピーしました' : 'Copied'; }
+      catch { status.textContent = ja ? 'コードを選択してコピーしてください' : 'Select the code to copy'; }
+    });
+    toolbar.append(label, wrap, copy, status);
+    pre.before(panel); panel.append(toolbar, pre);
+    pre.tabIndex = 0;
+    pre.setAttribute('aria-label', ja ? 'コード。長い行は横にスクロールできます' : 'Code. Scroll horizontally for long lines');
+    if (diff) pre.querySelectorAll<HTMLElement>('.line').forEach(line => {
+      if (line.textContent?.startsWith('-')) line.classList.add('diff-remove');
+      if (line.textContent?.startsWith('+')) line.classList.add('diff-add');
+    });
+  });
+}
+enhanceCode();
+document.addEventListener('astro:page-load', enhanceCode);
+</script>
