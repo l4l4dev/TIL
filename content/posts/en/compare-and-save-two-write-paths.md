@@ -38,6 +38,8 @@ Normally compare-and-save rejects the old request. The case where it does not is
 
 The separate file that holds placement information (task start times) has no comparison at all. For it, only the ordering prevents a late old write.
 
+![Autosave B waits while the final save writes A. Without tickets, old B overwrites A. With tickets, the stale request is superseded and disk remains A.](/TIL/images/save-order-en.svg)
+
 ## Take a sequence number when cutting out the text, compare it just before writing
 
 I stopped it with a sequence number (a ticket).
