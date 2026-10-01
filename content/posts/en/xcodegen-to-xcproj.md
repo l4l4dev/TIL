@@ -14,7 +14,7 @@ The switch taught me one more thing. Once the project is in git, you can see an 
 
 ## Under XcodeGen, forgetting to regenerate broke something every time
 
-XcodeGen builds `.xcodeproj` from `project.yml`. Keeping `.xcodeproj` out of git spares you `project.pbxproj` merge conflicts. In exchange, every time you add, delete, or rename a file you have to run `xcodegen generate` again, and Xcode's New File is off limits.
+XcodeGen builds `.xcodeproj` from `project.yml`. Keeping `.xcodeproj` out of git spares you `project.pbxproj` merge conflicts. FirnPlanner kept `.xcodeproj` out of git and generated it from `project.yml` every time. Because that setup rebuilt the project on each generation, our workflow was to run `xcodegen generate` again after adding, deleting, or renaming a file. Settings made in Xcode's UI were lost on the next generation, so we had a rule not to use New File.
 
 Forgetting that step caused real failures:
 
@@ -55,7 +55,7 @@ I learned about `project.xcproj` from [this article on Zenn](https://zenn.dev/d_
 - Existing projects convert with `xcodebuild -project App.xcodeproj -convert-project xcproj` (and back with `pbxproj`)
 - It ships with an editing CLI, `xcodeproj`, and a formatter, `xcprojformatter`
 
-With readable diffs, most of the reasons to use XcodeGen go away. XcodeGen does not support the new format yet.
+With readable diffs, most of the reasons to use XcodeGen go away, at least for this project. When I checked in September 2026, XcodeGen did not support the new format.
 
 ## Before switching, I checked that the converted project was the same project
 
@@ -66,9 +66,9 @@ Xcode 27.2 was still in beta, so waiting for the release was an option. I moved 
 3. Compare the file count of each target
 4. On both Xcode 27.0 and 27.2 beta 2, run the full Mac test suite, the snapshot tests, the iPhone build and tests, and the UI test build
 
-Deciding up front to diff the build settings paid off. I could switch after confirming zero differences, not after "it seems to work."
+I think deciding up front to diff the build settings paid off. I could switch after confirming zero differences, not after "it seems to work."
 
-A side finding: Xcode 27.2's `xcodebuild` does not convert an XcodeGen `project.pbxproj` on its own. But running `xcodegen generate` where `project.xcproj` exists puts both formats in the same `.xcodeproj`, and Xcode then reads neither. Anyone running the old step would break the project, so my environment check script now fails if both are present.
+A side finding: in my tests with 27.2 beta 2, `xcodebuild` did not convert an XcodeGen `project.pbxproj` on its own. But running `xcodegen generate` where `project.xcproj` exists puts both formats in the same `.xcodeproj`, and Xcode then reads neither. Anyone running the old step would break the project, so my environment check script now fails if both are present.
 
 ## I replaced the file list with synchronized folders
 
@@ -84,7 +84,7 @@ In `project.xcproj`, a folder-to-target mapping looks like this:
 There are a few exceptions:
 
 - Mac files shared with the iPhone app go into the folder's exceptions (`inclusions` under `membership-exceptions`). Ticking Target Membership in Xcode's File inspector writes them there
-- Folders that should go into resources as folders, like the snapshot reference images, go into `opaque-folders`. Treated as individual files, the PNGs land loose at the top of Resources, and `Bundle.url(forResource:)` can no longer find the folder
+- Folders that should go into resources as folders, like the snapshot reference images, go into `opaque-folders`. When this project treated them as individual files, the PNGs landed loose at the top of Resources, and `Bundle.url(forResource:)` could no longer find the folder
 - `Info.plist` stays a real file in git. It has array and dictionary values that the `INFOPLIST_KEY_*` build settings cannot express
 
 `project.xcproj` cannot hold comments; the formatter drops them. Reasons for build settings now live at the end of the xcconfig, and reasons for Info.plist keys live as comments in the Info.plist.
@@ -119,7 +119,7 @@ On the evening of the switch, `project.xcproj` showed a diff I had not made:
 +    { "kind": "folder", "path": "Tests", "opaque-folders": [ "SnapshotTests" ], "target-membership": [ "FirnPlannerTests" ] },
 ```
 
-I had left Xcode open while an agent merged branches into main. Xcode noticed the files in the working tree change, reloaded, and saved the project back in its own form. The same rewrite happened again during a merge in the middle of the night while I was asleep. It only showed up because an AI was running git in the same working tree where a person had the IDE open.
+I had left Xcode open while an agent merged branches into main. It looks like Xcode noticed the files in the working tree change, reloaded, and saved the project back in its own form. The same rewrite happened again during a merge in the middle of the night while I was asleep. I think I noticed it because an AI was running git in the same working tree where a person had the IDE open.
 
 The rewriting probably happened under XcodeGen as well. Back then `.xcodeproj` was in `.gitignore`, so nobody noticed, and the next generation overwrote it. Keeping the project in git made it visible.
 
@@ -138,12 +138,18 @@ I asked an agent to find out. It cloned the repository twice, kept the git versi
 | Snapshot test symbols (`nm`) | 0 | 0 |
 | Full test suite | Passed | Passed |
 
-The results were identical. A folder in `opaque-folders` is treated as a single item, so the unit test target neither compiles nor copies its contents. The exclusion changed nothing, and Xcode removed it every time it re-saved the project.
+Within what I compared, the results were the same. Neither bundle contained any SnapshotTests files, and both had zero snapshot test symbols.
 
-**I made Xcode's version the canonical one in git.** Running `xcprojformatter` leaves it unchanged. Now an open Xcode no longer produces this diff when an agent merges.
+What follows is my interpretation. In the `Tests` folder entry, `SnapshotTests` is listed in `opaque-folders`. I think that is why, in this project and this configuration, the snapshot test sources stay out of FirnPlannerTests even without the exclusion. Xcode probably treated the exclusion as redundant and dropped it each time it re-saved. I have not checked Apple's documentation on how `opaque-folders` and exclusions interact in general.
+
+I only checked the macOS Debug configuration, Xcode 27.2 beta 2, and the FirnPlannerTests bundle. I did not compare the snapshot test target, the app bundle, the Release configuration, or Xcode 27.0.
+
+Based on this, **I made Xcode's version the canonical one in git.** Running `xcprojformatter` leaves it unchanged. An open Xcode should no longer produce this diff when an agent merges.
 
 ## After editing project.xcproj by hand, open it in Xcode and look for a diff
 
-This added one step to my process. After editing `project.xcproj` by hand or with the CLI, format it, open it in Xcode once, and confirm that Xcode's re-save produces no diff. If it does, the setting is either redundant from Xcode's point of view or something Xcode wants to express differently. Building both versions and comparing them, as above, tells you which form to keep.
+This added one step to my process. After editing `project.xcproj` by hand or with the CLI, I format it, open it in Xcode once, and confirm that Xcode's re-save produces no diff.
+
+When a diff appears, I don't adopt Xcode's form right away. The diff alone can't tell me whether the setting is merely redundant from Xcode's point of view or whether a bug in Xcode (especially a beta) is dropping a meaningful setting. Before adopting it, I list the targets and configurations the setting should affect, build both versions, and compare the outputs. Here, that means not only FirnPlannerTests but also the snapshot test target, the Release configuration, and the other Xcode version I use as a baseline. If nothing differs within that scope, I adopt Xcode's form and record what I compared and what I didn't. If something differs, I keep the git version and report it to Apple as a bug.
 
 Some things are still unchecked: whether adding a file through Xcode's UI saves the expected diff in `project.xcproj`, and whether the build passes on the Xcode version Xcode Cloud uses. Xcode 27.2 is still in beta, so the behavior may change in the release. I will update this post when I know more.
