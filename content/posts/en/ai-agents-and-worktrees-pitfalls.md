@@ -19,11 +19,12 @@ The trouble starts when the returned branch becomes a PR as it is. The diff can 
 Before merging, I now always check two things.
 
 ```sh
-git merge-base --is-ancestor origin/main HEAD && echo "contains latest main"
+git fetch origin || exit 1
+git merge-base --is-ancestor origin/main HEAD && echo "contains the fetched main"
 git diff --stat origin/main...HEAD
 ```
 
-If the first one fails, I run `git rebase origin/main` first. If the second one lists files the branch was never meant to touch, I stop there. I only squash commits after the rebase.
+`merge-base` and `diff` do not contact the remote. They only look at the `origin/main` recorded locally. So I run `git fetch origin` first, and if it fails I stop there, without checking, rebasing or squashing. If `merge-base` fails after a successful fetch, I run `git rebase origin/main` first. If the second one lists files the branch was never meant to touch, I stop there. I only squash commits after the rebase.
 
 ## A worktree with no changes disappears, and the follow-up runs in another checkout
 

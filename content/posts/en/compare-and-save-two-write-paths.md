@@ -48,7 +48,7 @@ I stopped it with a sequence number (a ticket).
 - Inside the lock, which is just before the write, check whether a larger number has already entered its write. If so, return without writing.
 - A check after the write is too late, because the old content is already on the disk.
 
-Both paths take numbers from the same ledger, so what lands last on the disk is always the newer one.
+Both paths take numbers from the same ledger, so an older request can no longer write after a newer one has written. That is the only direction the numbers protect. The other order is covered under the limits below.
 
 I wrote a small example that extracts only the mechanism and ran it (Swift 6 mode, not the real code).
 
@@ -156,6 +156,7 @@ The limits are clear.
 
 - Neither the sequence number nor the lock can order anything except writes inside the same process. Conflicts with external editors belong to compare-and-save.
 - Even compare-and-save is two separate operations on the file system between the read and the write. If an external editor saves in that gap, its save is overwritten. File locks or `NSFileCoordinator` could close it, but both only work if the other app follows the same mechanism.
+- The sequence number only stops an older request from writing after a newer one. If the older request finishes writing first, the newer request still compares against the baseline it captured, which is now stale, so it can be skipped by the comparison. The minimal example in this post has no way to tell the app's own earlier write apart from an outside change. Loosening the comparison to let it through would defeat the purpose of protecting outside changes.
 - The comparison only checks whether the disk equals the baseline. If the disk happens to have returned to the same content as the baseline, it passes.
 
 What this defense is meant to remove is the long window between loading a file and saving it, while a person is editing. That window is gone. The small gap between the read and the write remains.

@@ -19,11 +19,12 @@ draft: false
 いまは、取り込む前に必ず次の 2 つを見ています。
 
 ```sh
-git merge-base --is-ancestor origin/main HEAD && echo "main の最新を含む"
+git fetch origin || exit 1
+git merge-base --is-ancestor origin/main HEAD && echo "取得した main を含む"
 git diff --stat origin/main...HEAD
 ```
 
-1 本目が失敗したら、先に `git rebase origin/main` をします。2 本目の `--stat` に、触ったはずのないファイルが出ていたら、そこで止まります。コミットをまとめる操作は、rebase のあとにだけします。
+`merge-base` と `diff` はリモートに問い合わせず、手元に記録された `origin/main` だけを見ます。なので先に `git fetch origin` をして、失敗したら確認も rebase もまとめもそこで止めます。fetch に成功したあとで `merge-base` が失敗したら、先に `git rebase origin/main` をします。2 本目の `--stat` に、触ったはずのないファイルが出ていたら、そこで止まります。コミットをまとめる操作は、rebase のあとにだけします。
 
 ## 変更が無いと worktree が消え、続きの作業が別のチェックアウトで動く
 
