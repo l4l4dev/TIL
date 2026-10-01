@@ -4,7 +4,7 @@ description: 'AI のエージェント 2 本が別々の git worktree で同時�
 lang: ja
 translationKey: git-stash-across-worktrees
 publishDate: 2026-10-01
-tags: ['Git', 'git worktree', 'Claude Code']
+tags: ['Git', 'git worktree', 'AI', 'Claude Code']
 draft: false
 ---
 

@@ -4,7 +4,7 @@ description: 'Two AI agents used git stash at the same time in separate git work
 lang: en
 translationKey: git-stash-across-worktrees
 publishDate: 2026-10-01
-tags: ['Git', 'git worktree', 'Claude Code']
+tags: ['Git', 'git worktree', 'AI', 'Claude Code']
 draft: false
 ---
 
