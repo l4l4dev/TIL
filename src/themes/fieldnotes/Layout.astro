@@ -1,6 +1,7 @@
 ---
 import {href,ui,type Locale} from '@/i18n';
 import './theme.css';
+import GoogleAnalytics from '@/components/GoogleAnalytics.astro';
 import ThemeProvider from '@/components/ThemeProvider.astro';
 import ThemeSwitch from './ThemeSwitch.astro';
 interface Props {lang:Locale; title:string; alternate:string; article?:boolean; description?:string; hasTranslation?:boolean;}
@@ -9,5 +10,5 @@ const preview=Astro.url.pathname.includes('/theme-preview/');
 const home=href(lang,preview?'theme-preview/':'');
 const canonical=new URL(Astro.url.pathname,Astro.site);
 ---
-<html lang={lang}><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width"/>{preview && <meta name="robots" content="noindex,nofollow"/>}<meta name="description" content={description}/>{!preview && <><link rel="canonical" href={canonical}/><link rel="alternate" type="application/rss+xml" href={href(lang,'rss.xml')} title="TIL"/>{hasTranslation && <link rel="alternate" hreflang={lang==='ja'?'en':'ja'} href={new URL(alternate,Astro.site)}/>}</>}<link rel="icon" href={`${import.meta.env.BASE_URL}icon.svg`} type="image/svg+xml"/><title>{title} · l4l4dev</title><ThemeProvider/></head>
+<html lang={lang}><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width"/>{preview && <meta name="robots" content="noindex,nofollow"/>}<meta name="description" content={description}/>{!preview && <><link rel="canonical" href={canonical}/><link rel="alternate" type="application/rss+xml" href={href(lang,'rss.xml')} title="TIL"/>{hasTranslation && <link rel="alternate" hreflang={lang==='ja'?'en':'ja'} href={new URL(alternate,Astro.site)}/>}</>}<link rel="icon" href={`${import.meta.env.BASE_URL}icon.svg`} type="image/svg+xml"/><title>{title} · l4l4dev</title><ThemeProvider/><GoogleAnalytics/></head>
 <body class:list={{"article-site":article}}><a class="skip" href="#main">{ui[lang].skip}</a><header class="site-header"><div class="header-inner"><a class="wordmark" href={home}>l4l4dev<span> / notes</span></a><nav aria-label={lang==='ja'?'ナビゲーション':'Navigation'}><a href={`${home}#posts`}>{ui[lang].posts}</a><a href="https://l4l4dev.github.io/">Profile ↗</a><a class="locale" href={alternate}>{lang==='ja'?'EN':'日本語'}</a><ThemeSwitch lang={lang}/></nav></div></header><main id="main" class:list={{'article-main':article}}><slot/></main><footer><span>© {new Date().getFullYear()} l4l4dev</span><div><a href="https://github.com/l4l4dev">GitHub ↗</a><a href={href(lang,'rss.xml')}>RSS</a><a href={href(lang,'about/')}>{ui[lang].about}</a></div></footer></body></html>
