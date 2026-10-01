@@ -8,7 +8,7 @@ tags: ['Git', 'git worktree', 'Xcode', 'AI', 'Claude Code']
 draft: false
 ---
 
-[前回の記事](/TIL/ja/posts/git-stash-across-worktrees/)では、`git stash` が worktree をまたいで 1 本しかないせいで、エージェント同士の変更が入れ替わった話を書きました。個人で作っている macOS の1日プランナー [FirnPlanner](https://github.com/l4l4dev/FirnPlanner) では、Claude Code のサブエージェントを git worktree ごとに並行で動かしています。この運用では、stash のほかにも踏んだ落とし穴がいくつかありました。短い節で、起きたこと、理由、いまの対処を順に書きます。
+[前回の記事](/TIL/ja/posts/git-stash-across-worktrees/)では、`git stash` が worktree をまたいで 1 本しかないせいで、エージェント同士の変更が入れ替わった話を書きました。個人で作っている macOS の1日プランナー [FirnPlanner](https://github.com/l4l4dev/FirnPlanner) では、Claude Code のサブエージェントを並行で動かしています。1 本ごとに git worktree を分けています。この運用では、stash のほかにも踏んだ落とし穴がいくつかありました。短い節で、起きたこと、理由、いまの対処を順に書きます。
 
 ## worktree は起動した時点の main から切られるので、PR の前に載せ直す
 
@@ -80,11 +80,21 @@ xcodebuild は、プロジェクトのパスごとに `~/Library/Developer/Xcode
 
 2026 年 9 月 9 日に、Mac から「ディスクの空きがほとんどありません」と警告が出ました。当時の `DerivedData` は 613 GB で、このアプリのフォルダ (`FirnPlanner-<ハッシュ>`) が 265 個ありました。1 つが 2〜3 GB です。今日は 15 個、`DerivedData` 全体で 39 GB でした (名前の一覧を読み、`du` で大きさを見ただけで、何も消していません)。
 
-対処として、worktree を消すときは対応する DerivedData も消すようにしました。直近 2 時間に触っていないフォルダだけを消せば、走っているビルドのものには触れません。
+対処として、worktree を消すときは DerivedData も消すようにしました。最初は、次のコマンドで「直近 2 時間に触っていないフォルダ」を消していました。
 
 ```sh
 find ~/Library/Developer/Xcode/DerivedData -maxdepth 1 -name 'FirnPlanner-*' -mmin +120 -exec rm -rf {} +
 ```
+
+これでは、走っているビルドを除けません。この記事のレビューで指摘されて気づきました。`-mmin` が見るのは、DerivedData の直下にあるフォルダ自身の更新時刻です。ビルドが中の `Build/` などに書いても、親のフォルダの更新時刻は変わらないことがあります。2 時間より前に作られたフォルダを使っているビルドは、走っていても消す対象に入ります。
+
+そこで、DerivedData の場所を worktree ごとに自分で決めて渡す形に変えます。
+
+```sh
+xcodebuild ... -derivedDataPath ~/tmp/dd/<worktree の名前>
+```
+
+こうすれば、どの worktree のものかを場所で特定できます。消すのは worktree を消すときで、その前に `pgrep -x xcodebuild` で xcodebuild が走っていないことと、Xcode でその worktree を開いていないことを確かめます。更新時刻の条件は、残っているフォルダの候補を絞るのには使えても、使われていないことの確認にはなりません。
 
 エージェントに後片付けを任せると、並行して動いている別のエージェントのフォルダまで消されることがありました。指示には「DerivedData は消さない」を入れ、消すのは親のセッションだけにしています。
 
@@ -92,7 +102,7 @@ find ~/Library/Developer/Xcode/DerivedData -maxdepth 1 -name 'FirnPlanner-*' -mm
 
 ## 待ちと xcodebuild を 2 段に分けると、エージェントが止まる
 
-xcodebuild は同時に 1 本しか動かせません。2 本目は DerivedData を取り合って、両方が止まります。そこで、ロックを取って 1 本ずつ流すラッパーを置いています。macOS には `flock` コマンドが無いので、Python の `fcntl.flock` で書きました。
+このプロジェクトでは、xcodebuild を同時に 1 本に絞っています。同じ DerivedData を使う 2 本目が走ると、取り合って両方が止まったからです。そこで、ロックを取って 1 本ずつ流すラッパーを置いています。macOS には `flock` コマンドが無いので、Python の `fcntl.flock` で書きました。
 
 ```sh
 #!/bin/sh
@@ -115,7 +125,7 @@ A start 19
 A end   21
 ```
 
-もう 1 つ、エージェントに待たせる書き方でも止まりました。「xcodebuild が空くのを待ってから実行して」と頼むと、Monitor を張って「通知を待つ」と言ってターンを終えます。サブエージェントは自分が張った Monitor やバックグラウンドの通知を受け取れないので、そのまま止まってしまいます。Bash は実行が 120 秒を超えると自動でバックグラウンドに回るので、時間のかかる xcodebuild でも同じことが起きました。
+もう 1 つ、エージェントに待たせる書き方でも止まりました。「xcodebuild が空くのを待ってから実行して」と頼むと、Monitor を張って「通知を待つ」と言ってターンを終えます。私の環境では、サブエージェントは自分が張った Monitor やバックグラウンドの通知を受け取れず、そのまま止まりました。もう 1 つあります。2026 年 9 月に使っていた Claude Code の Bash ツールでは、timeout を指定しないと、120 秒で実行がバックグラウンドに回りました。シェルの bash の仕様ではなく、ツールの側の動きです (当時の版は記録していません)。時間のかかる xcodebuild では、これでも同じ止まり方をしました。
 
 いまは、待ちと実行を 1 コマンドにつなぎ、timeout を最大にして渡しています。
 

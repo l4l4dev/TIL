@@ -80,11 +80,21 @@ xcodebuild creates a separate folder under `~/Library/Developer/Xcode/DerivedDat
 
 On 9 September 2026 my Mac warned that the disk was almost full. At that time `DerivedData` was 613 GB, and it held 265 folders for this app (`FirnPlanner-<hash>`), at 2 to 3 GB each. Today it holds 15, and the whole `DerivedData` is 39 GB. I only read the list of names and checked sizes with `du`; I deleted nothing.
 
-Now, when I remove a worktree, I remove its DerivedData too. Deleting only folders untouched for the last two hours leaves the ones for running builds alone.
+To deal with it, I started deleting DerivedData when I remove a worktree. At first I used this command to delete folders not touched in the last two hours:
 
 ```sh
 find ~/Library/Developer/Xcode/DerivedData -maxdepth 1 -name 'FirnPlanner-*' -mmin +120 -exec rm -rf {} +
 ```
+
+This does not exclude running builds. I learned that from the review of this post. `-mmin` looks at the modification time of each folder directly under DerivedData. When a build writes inside it, under `Build/` and so on, the parent folder time may not change. A running build that uses a folder created more than two hours ago is still a deletion target.
+
+So I am switching to choosing the DerivedData location per worktree and passing it in:
+
+```sh
+xcodebuild ... -derivedDataPath ~/tmp/dd/<worktree-name>
+```
+
+The location then tells you which worktree a folder belongs to. I delete it when I remove the worktree, after checking with `pgrep -x xcodebuild` that no xcodebuild is running and that Xcode does not have that worktree open. A time condition can narrow down candidates among leftover folders, but it does not show that a folder is unused.
 
 When I let agents do the cleanup, they sometimes deleted the folders of other agents running at the same time. My instructions now say not to delete DerivedData, and only the parent session does it.
 
@@ -92,7 +102,7 @@ Sharing one DerivedData causes trouble too. When I ran the full test suite in th
 
 ## Splitting the wait and xcodebuild into two steps stalls the agent
 
-Only one xcodebuild can run at a time. A second one fights over DerivedData and both stop. So I keep a wrapper that takes a lock and runs them one by one. macOS has no `flock` command, so I wrote it with Python `fcntl.flock`.
+In this project, I limit xcodebuild to one run at a time. When a second run used the same DerivedData, the two fought over it and both stopped. So I keep a wrapper that takes a lock and runs them one by one. macOS has no `flock` command, so I wrote it with Python `fcntl.flock`.
 
 ```sh
 #!/bin/sh
@@ -115,7 +125,7 @@ A start 19
 A end   21
 ```
 
-Another way of making agents wait also stalled them. When I told an agent to wait until xcodebuild is free and then run it, it set up a Monitor, said it would wait for the notification, and ended its turn. A subagent cannot receive the notifications of a Monitor or background job it started, so it just stops. Bash also moves a command to the background automatically after 120 seconds, so a long xcodebuild run caused the same thing.
+Another way of making agents wait also stalled them. When I told an agent to wait until xcodebuild is free and then run it, it set up a Monitor, said it would wait for the notification, and ended its turn. In my environment, a subagent could not receive the notifications of a Monitor or background job it started, and it just stopped. Also, the Bash tool of the Claude Code I used in September 2026 moved a command to the background after 120 seconds when no timeout was given. That is the tool, not the bash shell itself, and I did not record the version at the time. Long xcodebuild runs stalled the same way because of it.
 
 I now chain the wait and the run into one command, and pass the maximum timeout.
 
