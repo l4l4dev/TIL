@@ -4,7 +4,7 @@ description: 'Xcode 27.2 stores .xcodeproj as JSON5, so I stopped generating the
 lang: en
 translationKey: xcodegen-to-xcproj
 publishDate: 2026-10-01
-tags: ['Xcode', 'XcodeGen', 'iOS', 'macOS']
+tags: ['Xcode', 'XcodeGen', 'iOS', 'macOS', 'AI']
 draft: false
 ---
 
@@ -50,7 +50,7 @@ The failures later in this post were recorded the same way. The Xcode rewrites a
 
 ## project.xcproj is a project file with readable diffs
 
-I learned about `project.xcproj` from [this article on Zenn](https://zenn.dev/d_date/articles/b1a7baa74b77da) (in Japanese). The key points:
+Apple documents the new format in [Updating your Xcode project configuration file format](https://developer.apple.com/documentation/xcode/updating-your-xcode-project-configuration-file-format). The key points:
 
 - New projects created with Xcode 27.2 store `.xcodeproj` as `project.xcproj` (JSON5)
 - Only Xcode 27.0 and later can read it. Xcode 26 and earlier cannot open it

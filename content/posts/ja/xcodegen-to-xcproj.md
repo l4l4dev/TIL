@@ -4,7 +4,7 @@ description: 'Xcode 27.2 で .xcodeproj の中身が JSON5 になったので、
 lang: ja
 translationKey: xcodegen-to-xcproj
 publishDate: 2026-10-01
-tags: ['Xcode', 'XcodeGen', 'iOS', 'macOS']
+tags: ['Xcode', 'XcodeGen', 'iOS', 'macOS', 'AI']
 draft: false
 ---
 
@@ -50,7 +50,7 @@ FirnPlanner の実装の大半は、AI のコーディングエージェント (
 
 ## project.xcproj は、読める差分のプロジェクトファイル
 
-`project.xcproj` のことは、[Zenn の記事](https://zenn.dev/d_date/articles/b1a7baa74b77da)で知りました。要点は次のとおりです。
+新しい形式については、Apple の公式資料 [Updating your Xcode project configuration file format](https://developer.apple.com/documentation/xcode/updating-your-xcode-project-configuration-file-format) に説明があります。要点は次のとおりです。
 
 - Xcode 27.2 で新規に作るプロジェクトは、`.xcodeproj` の中身が `project.xcproj` (JSON5) になる
 - 読めるのは Xcode 27.0 以降。26 以前では開けない
