@@ -4,7 +4,7 @@ An experimental Astro theme for a bilingual personal blog. Neutral paper, charco
 
 Preview: `/TIL/ja/theme-preview/` and `/TIL/en/theme-preview/`.
 
-`Layout.astro` and `theme.css` are kept together so the theme can later move into a separate repository. Preview routes adapt the blog's content collection. `CodeTools.astro` adds copy and wrapping controls. Existing public routes remain available during evaluation.
+`Layout.astro` and `theme.css` are kept together so the theme can later move into a separate repository. Preview routes adapt the blog's content collection. `CodeTools.astro` styles code panels and diff lines without visible labels or controls. Existing public routes remain available during evaluation.
 
 No profile or background photographs are required or loaded. The theme code is original; no third-party theme templates are copied. No personal name is included in theme files.
 
