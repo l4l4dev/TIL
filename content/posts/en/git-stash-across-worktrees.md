@@ -12,7 +12,7 @@ I build [FirnPlanner](https://github.com/l4l4dev/FirnPlanner), a daily planner f
 
 `git stash` turned out to be the exception. Two agents stashed and popped at almost the same moment, and one agent's uncommitted changes showed up in the other agent's worktree.
 
-## What happened
+## Parallel stash and pop moved changes into another worktree
 
 I had given two tasks to two agents in parallel: a fix to the sync merge, and an unrelated task. Partway through, both wanted to set their local changes aside for a moment, so both ran `git stash`, did some work, and then ran `git stash pop`.
 
@@ -28,7 +28,7 @@ Only pseudo refs such as `HEAD`, and refs under `refs/bisect`, `refs/worktree` a
 
 `git stash pop` does not check which worktree an entry came from. It applies the top entry, `stash@{0}`, to whichever worktree you are in. If two agents push and pop in turn, each can pop the other's entry.
 
-## Reproducing it
+## With two worktrees, pop takes the other entry
 
 Create two worktrees and stash in each:
 
@@ -89,8 +89,8 @@ git stash apply refs/worktree/wip
 
 Running `git rev-parse refs/worktree/wip` from another worktree did not find it. I don't use this, though. Saying "don't use stash" is simpler than getting an agent to write these steps correctly every time.
 
-## When changes do get swapped
+## If changes swap, let the owner restore them
 
-If a swap happens, the agent that owns the worktree restores it. Another agent, or the coordinating session, does not touch someone else's worktree in its place. This time, the agent that tried to restore the other worktree stopped at the permission prompt. Handing the diff to the owner and letting it reapply the patch makes it easier to follow what went back where.
+If a swap happens, the agent that owns the worktree restores it. Another agent, or the coordinating session, does not touch someone else's worktree in its place. Handing the diff to the owner and letting it reapply the patch makes it easier to follow what went back where.
 
 Worktrees give you separate working trees, but most of what is inside `.git` is shared. Besides the stash, tags and remote-tracking branches are shared too. Before running work in parallel, it's worth reading the REFS section of `git help worktree` once to see what is shared.
