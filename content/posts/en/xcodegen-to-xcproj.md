@@ -12,6 +12,8 @@ I dropped XcodeGen from [FirnPlanner](https://github.com/l4l4dev/FirnPlanner), a
 
 The switch taught me one more thing. Once the project is in git, you can see an open Xcode re-saving the project file. One setting disappeared when it did, and I had to find out whether it mattered.
 
+![This project moved from regenerating from project.yml to keeping project.xcproj directly in Git](/TIL/images/project-workflow-en.svg)
+
 ## Under XcodeGen, forgetting to regenerate broke something every time
 
 XcodeGen builds `.xcodeproj` from `project.yml`. Keeping `.xcodeproj` out of git spares you `project.pbxproj` merge conflicts. FirnPlanner kept `.xcodeproj` out of git and generated it from `project.yml` every time. Because that setup rebuilt the project on each generation, our workflow was to run `xcodegen generate` again after adding, deleting, or renaming a file. Settings made in Xcode's UI were lost on the next generation, so we had a rule not to use New File.
@@ -97,6 +99,11 @@ I also missed something. The agents had written step-by-step check instructions 
 
 On the evening of the switch, `project.xcproj` showed a diff I had not made:
 
+The removed setting was the `membership-exceptions` entry that excluded `SnapshotTests`.
+
+<details>
+<summary>View the full diff</summary>
+
 ```diff
 -    }, {
 -      "kind": "folder",
@@ -118,6 +125,8 @@ On the evening of the switch, `project.xcproj` showed a diff I had not made:
      },
 +    { "kind": "folder", "path": "Tests", "opaque-folders": [ "SnapshotTests" ], "target-membership": [ "FirnPlannerTests" ] },
 ```
+
+</details>
 
 I had left Xcode open while an agent merged branches into main. It looks like Xcode noticed the files in the working tree change, reloaded, and saved the project back in its own form. The same rewrite happened again during a merge in the middle of the night while I was asleep. I think I noticed it because an AI was running git in the same working tree where a person had the IDE open.
 

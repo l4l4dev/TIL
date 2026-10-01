@@ -12,6 +12,8 @@ draft: false
 
 移ってみると、もう一つ分かったことがありました。プロジェクトを git に入れると、開いている Xcode がプロジェクトファイルを保存し直していることが差分として見えるようになります。そのときに消える設定があったので、残すべきか確かめた話も書きます。
 
+![このプロジェクトでは、project.yml から毎回生成する方式から、project.xcproj を Git で直接管理する方式へ移行した](/TIL/images/project-workflow-ja.svg)
+
 ## XcodeGen では、生成を忘れるたびに何かが壊れた
 
 XcodeGen は `project.yml` から `.xcodeproj` を作るツールです。`.xcodeproj` を git に入れずに済むので、`project.pbxproj` のコンフリクトに悩まなくて済みます。FirnPlanner では `.xcodeproj` を git に入れず、`project.yml` から毎回作る構成にしていました。この構成ではプロジェクトの中身を生成のたびに作り直すので、ファイルを足す・消す・名前を変えたら `xcodegen generate` を流し直す運用でした。Xcode の画面で付けた設定は次の生成で消えるため、New File も使わない決まりにしていました。
@@ -97,6 +99,11 @@ FirnPlanner の実装の大半は、AI のコーディングエージェント (
 
 移った日の夜、触っていないはずの `project.xcproj` に差分が出ていました。
 
+削除されたのは、`SnapshotTests` を除外する `membership-exceptions` の設定です。
+
+<details>
+<summary>実際の差分を開く</summary>
+
 ```diff
 -    }, {
 -      "kind": "folder",
@@ -118,6 +125,8 @@ FirnPlanner の実装の大半は、AI のコーディングエージェント (
      },
 +    { "kind": "folder", "path": "Tests", "opaque-folders": [ "SnapshotTests" ], "target-membership": [ "FirnPlannerTests" ] },
 ```
+
+</details>
 
 私が Xcode を開いたままにしている間に、エージェントがブランチを main に取り込んでいました。作業ツリーのファイルが変わったのを Xcode が読み直し、プロジェクトを自分の形で保存し直したようです。私が寝ている間の夜中の取り込みでも、同じ書き直しが起きました。AI が git を操作する作業ツリーと、人が開いている IDE が同じ場所にある、という組み合わせだったから気づけたのだと思います。
 
