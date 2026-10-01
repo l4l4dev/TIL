@@ -1,0 +1,29 @@
+---
+import type {Locale} from '@/i18n';
+const {lang}=Astro.props as {lang:Locale};
+---
+<fieldnotes-theme class="theme-switch" data-light={lang==='ja'?'ライト':'Light'} data-dark={lang==='ja'?'ダーク':'Dark'}>
+<button type="button" role="switch" aria-checked="false" aria-label={lang==='ja'?'ダークモード':'Dark mode'}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15.5A9 9 0 0 1 8.5 4a9 9 0 1 0 11.5 11.5Z" stroke-width="1.5"/></svg><span></span></button>
+</fieldnotes-theme>
+<script>
+class FieldnotesTheme extends HTMLElement {
+  connectedCallback() {
+    const button=this.querySelector('button');
+    const label=this.querySelector('span');
+    if (!button || !label) return;
+    const sync=()=>{
+      const dark=document.documentElement.dataset.theme==='dark';
+      button.setAttribute('aria-checked',String(dark));
+      label.textContent=(dark?this.dataset.dark:this.dataset.light) ?? '';
+    };
+    button.addEventListener('click',()=>document.dispatchEvent(new CustomEvent('theme-change',{detail:{theme:document.documentElement.dataset.theme==='dark'?'light':'dark'}})));
+    const observer=new MutationObserver(sync);
+    observer.observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+    this.observer=observer;
+    sync();
+  }
+  observer?:MutationObserver;
+  disconnectedCallback(){this.observer?.disconnect();}
+}
+if(!customElements.get('fieldnotes-theme')) customElements.define('fieldnotes-theme',FieldnotesTheme);
+</script>
