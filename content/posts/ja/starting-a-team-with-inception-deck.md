@@ -4,7 +4,7 @@ description: '初めて集まるチームで、目的や期待の違いをどう
 lang: ja
 translationKey: starting-a-team-with-inception-deck
 publishDate: 2026-09-30
-tags: ['チーム', 'アジャイル', 'インセプションデッキ']
+tags: ['Teams', 'Agile', 'Inception deck']
 draft: false
 ---
 
