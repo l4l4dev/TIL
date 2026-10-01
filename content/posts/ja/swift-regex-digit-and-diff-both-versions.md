@@ -61,10 +61,10 @@ dump-old/   old を読む実行ファイル
 dump-new/   new を読む実行ファイル
 ```
 
-`dump-old` と `dump-new` の `Package.swift` は、依存先のパスだけが違います。
+`dump-old` と `dump-new` の `Package.swift` は、依存先を指す 2 か所だけが違います。`dump-new` では、`.package(path: "../new")` と `.product(name: "Lib", package: "new")` の両方を `new` に変えます。パスから付く package の名前はディレクトリ名 (`old` / `new`) なので、パスだけ変えて `package: "old"` を残すと、`unknown package 'old'` でビルドが止まります。
 
 ```swift
-// dump-old/Package.swift (dump-new は "../new")
+// dump-old/Package.swift
 // swift-tools-version:5.9
 import PackageDescription
 let package = Package(

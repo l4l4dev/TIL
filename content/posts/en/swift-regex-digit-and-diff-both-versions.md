@@ -61,10 +61,10 @@ dump-old/   an executable that loads old
 dump-new/   an executable that loads new
 ```
 
-The two `Package.swift` files for the executables differ only in the dependency path.
+The two `Package.swift` files for the executables differ in exactly two places. In `dump-new`, change both `.package(path: "../new")` and `.product(name: "Lib", package: "new")` to `new`. A path dependency gets its package name from the directory name (`old` / `new`), so if you change only the path and leave `package: "old"`, the build stops with `unknown package 'old'`.
 
 ```swift
-// dump-old/Package.swift (dump-new uses "../new")
+// dump-old/Package.swift
 // swift-tools-version:5.9
 import PackageDescription
 let package = Package(

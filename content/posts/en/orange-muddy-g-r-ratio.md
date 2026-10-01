@@ -1,8 +1,8 @@
 ---
-title: 'Orange looked muddy because of its green ratio, not its blue'
-description: 'While redoing the colors of the timeline blocks, I rejected one orange after another as dirty. The cause was the G/R ratio. Notes on why adding white does not help, and why black text on a light fill makes the block look brown.'
+title: 'The oranges that looked muddy had a higher G/R ratio'
+description: 'While redoing the colors of the timeline blocks, I rejected one orange after another as dirty. Lining up the RGB values of the candidates, the ones that looked muddy to me had a higher G/R ratio, so I made G/R and R part of my checks. Also why black text on a light fill made the block look brown to me.'
 lang: en
-translationKey: orange-gets-muddy-by-green
+translationKey: orange-muddy-g-r-ratio
 publishDate: 2026-10-01
 tags: ['Design', 'Color', 'macOS']
 draft: false
@@ -12,9 +12,9 @@ I build [FirnPlanner](https://github.com/l4l4dev/FirnPlanner), a daily planner f
 
 For a while I kept proposing orange candidates and rejecting them as "dirty" or "rotten". I could not tell what to fix, so I was just moving the color around. In the end I went looking for the cause. What follows is a record of how these colors looked to me, not a general rule.
 
-## Orange looked muddy when G got close to R
+## The candidates that looked muddy had a higher G/R
 
-At first I assumed a bluish tint was making it muddy. Once I lined up the numbers, what mattered was the ratio of G to R (G/R).
+At first I assumed a bluish tint was making it muddy. When I lined up the candidates' RGB values, the ones that looked muddy to me were the ones with a higher ratio of G to R (G/R).
 
 <div style="display:flex;flex-wrap:wrap;gap:8px;margin:1em 0;">
 <span style="background:#E8A33D;color:#3D2000;padding:10px 14px;border-radius:4px;">#E8A33D (G/R 0.70)</span>
@@ -24,21 +24,21 @@ At first I assumed a bluish tint was making it muddy. Once I lined up the number
 
 These values are computed from the hex codes.
 
-| Color | R | G | G/R |
-|---|---|---|---|
-| `#E8A33D` | 232 | 163 | 0.70 |
-| `#D9A441` | 217 | 164 | 0.76 |
-| `#FFC14D` | 255 | 193 | 0.76 |
+| Color | R | G | B | G/R |
+|---|---|---|---|---|
+| `#E8A33D` | 232 | 163 | 61 | 0.70 |
+| `#D9A441` | 217 | 164 | 65 | 0.76 |
+| `#FFC14D` | 255 | 193 | 77 | 0.76 |
 
-To my eye, `#E8A33D` looked like a normal orange and `#D9A441` looked rotten. The only difference between them is 0.70 versus 0.76. When G gets slightly closer to R, the color drifts toward yellow-green and looks muddy. As a rule of thumb, I started to feel the muddiness once G/R went above about 0.75.
+To my eye, `#E8A33D` looked like a normal orange and `#D9A441` looked rotten. The two colors differ in all of R, G and B, so this comparison alone does not show that G/R is the cause. Among the differences, the one I focused on was G/R: 0.70 versus 0.76. The idea that a color drifts toward yellow-green as G gets closer to R fits what I saw. Since then, I treat a candidate with G/R above 0.75 as one to suspect of muddiness.
 
 ### Making it lighter, or mixing in white, does not remove it
 
 Brightening the color to get rid of the muddiness did not help. Mixing in white pushes both R and G toward 255, so G/R moves toward 1. Mixing 50% white into `#D9A441` gives `#ECD2A0`, and its G/R is 0.89. To me that was a color that was pale and still dirty.
 
-### With the same G/R, a maxed-out R pulls it toward yellow
+### With about the same G/R, the color with R at 255 did not look muddy
 
-The color I finally adopted is `#FFC14D`, with a G/R of 0.76. That is the same level as `#D9A441`, yet it did not look muddy. R is pinned at 255, and the color reads as yellow rather than yellow-green. I had to look at the absolute value of R as well as the ratio.
+The color I finally adopted is `#FFC14D`. Its G/R is 0.76, the same as `#D9A441`, yet it did not look muddy. R is pinned at 255, and the whole color is lighter. This comparison can't tell which of those mattered, but I decided not to judge by G/R alone and to look at R as well.
 
 ## Black text on a light fill makes the block look brown
 
