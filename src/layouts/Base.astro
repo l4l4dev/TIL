@@ -1,15 +1,7 @@
 ---
-import Header from '@/components/layout/Header.astro';
-import ThemeProvider from '@/components/ThemeProvider.astro';
+import Layout from '@/themes/fieldnotes/Layout.astro';
 import {href,ui,type Locale} from '@/i18n';
-import '@/styles/global.css';
 interface Props {lang:Locale;title:string;description?:string;alternate?:string;hasTranslation?:boolean;}
 const {lang,title,description=ui[lang].description,alternate=href(lang==='ja'?'en':'ja'),hasTranslation=true}=Astro.props;
-const canonical=new URL(Astro.url.pathname,Astro.site);
 ---
-<html lang={lang} class="scroll-smooth">
-<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width"/><title>{title} · TIL</title><meta name="description" content={description}/><link rel="canonical" href={canonical}/><link rel="icon" href={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/icon.svg`}/><link rel="alternate" type="application/rss+xml" href={href(lang,'rss.xml')} title="TIL"/>{hasTranslation && <><link rel="alternate" hreflang={lang} href={canonical}/><link rel="alternate" hreflang={lang==='ja'?'en':'ja'} href={new URL(alternate,Astro.site)}/></>}<ThemeProvider/></head>
-<body class="bg-global-bg text-global-text"><div class="pure-gradient" aria-hidden="true"></div><div class="pure-shell">
-<a class="sr-only focus:not-sr-only" href="#main">{ui[lang].skip}</a><Header lang={lang} alternate={alternate}/><main id="main" class="pure-main"><slot/></main>
-<footer class="pure-footer"><span>© {new Date().getFullYear()} l4l4dev</span><div><a href="https://github.com/l4l4dev">GitHub</a><a href={href(lang,'rss.xml')}>RSS</a><a href="https://github.com/cworld1/astro-theme-pure">Astro Pure</a></div></footer>
-</div></body></html>
+<Layout lang={lang} title={title} description={description} alternate={alternate} hasTranslation={hasTranslation} article><div class="reading-page reading-body"><slot/></div></Layout>
