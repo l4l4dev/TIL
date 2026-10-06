@@ -29,6 +29,8 @@ Since moving to `project.xcproj`, two things seem to affect how conflicts happen
 
 The first is **synchronized folders**. Once a source folder is tied to a target, any file placed in that folder joins the target. Adding, deleting or renaming a file does not change the project file. The four places above are not rewritten at all, so this helps the most. Note that synchronized folders have been available in `project.pbxproj` since Xcode 16. You can adopt them without moving to JSON.
 
+![In project.pbxproj, adding one file changes four places: PBXFileReference, PBXBuildFile, the group children and the build phase files. With a synchronized folder you only place the file in the folder, and the project file does not change.](/TIL/images/project-file-changes-en.svg)
+
 The second is the **JSON5 format**.
 
 ```json5
@@ -41,18 +43,21 @@ Some things can still conflict. Build settings, new targets, package dependencie
 
 ## Redoing 660 merges to count what conflicted
 
-In the FirnPlanner development repository, most of the implementation is done by an AI coding agent (Claude Code), and agents work in parallel, one per git worktree. From 1 August to 6 October 2026, main has 660 merge commits.
+In the FirnPlanner development repository, most of the implementation is done by an AI coding agent (Claude Code), and agents work in parallel, one per git worktree. I counted every merge commit reachable from main as of 12:24 on 6 October 2026 (commit `ba912d2fb`): 660 in total. This includes merges made inside branches (limiting to the first-parent history of main gives 562). The history starts on 1 August, so I did not filter by date.
 
-Git does not record conflicts. So I merged the two parents of each merge commit again with `git merge-tree` and listed the conflicting files.
+Git does not record conflicts. So I merged the two parents of each merge commit again with `git merge-tree` and wrote out the conflicting files, one per line.
 
 ```sh
-git rev-list --merges main | while read m; do
-  git merge-tree --write-tree --name-only --no-messages "$m^1" "$m^2" >/dev/null
-  [ $? -eq 1 ] && echo "$m"   # 1 means there were conflicts
-done
+git rev-list --merges ba912d2fb | while read m; do
+  out=$(git merge-tree --write-tree --name-only --no-messages "$m^1" "$m^2")
+  # Exit code 1 means conflicts. The first output line is the tree ID, the rest are conflicting files
+  [ $? -eq 1 ] && printf '%s\n' "$out" | tail -n +2 | awk -v m="$m" '{ print m "\t" $0 }'
+done > conflicts.tsv
 ```
 
-With `--name-only`, the lines after the first one are the names of the conflicting files. The results:
+`conflicts.tsv` came out as 179 lines of "merge ID, tab, conflicting file". Counting distinct merge IDs gives 126. Files are grouped by the start of the path (whether it is under `backlog/`) and by extension. The results:
+
+![Of 660 merge commits reachable from main, 126 had conflicts: 94 only in work records, 11 in both records and code, and 21 only in non-record files. Swift conflicted in 23 merges, the project file in none.](/TIL/images/merge-conflicts-en.svg)
 
 | Item | Count |
 | --- | --- |

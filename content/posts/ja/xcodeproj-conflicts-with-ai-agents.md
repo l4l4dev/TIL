@@ -29,6 +29,8 @@ draft: false
 
 1 つ目は、**同期フォルダ**です。ソースのフォルダをターゲットに結び付けておくと、フォルダに置いたファイルはそのままターゲットに入ります。ファイルを足す・消す・名前を変えるときに、プロジェクトファイルが変わりません。上の 4 か所がそもそも書き換わらないので、いちばん効きます。ただし同期フォルダは Xcode 16 から `project.pbxproj` でも使えます。JSON に移らなくても、ここは取り入れられます。
 
+![project.pbxproj では 1 本の追加で PBXFileReference、PBXBuildFile、グループの children、ビルドフェーズの files の 4 か所が変わる。同期フォルダではフォルダに置くだけで、プロジェクトファイルは変わらない。](/TIL/images/project-file-changes-ja.svg)
+
 2 つ目が、**JSON5 という形式**です。
 
 ```json5
@@ -41,18 +43,21 @@ ID ではなくパスとターゲットの名前で書かれているので、�
 
 ## 660 件のマージをやり直して、何がぶつかっていたかを数えた
 
-FirnPlanner の開発リポジトリでは、実装の大半を AI のコーディングエージェント (Claude Code) に任せています。エージェントは git worktree ごとに並行で動きます。2026 年 8 月 1 日から 10 月 6 日までの main には、マージコミットが 660 件あります。
+FirnPlanner の開発リポジトリでは、実装の大半を AI のコーディングエージェント (Claude Code) に任せています。エージェントは git worktree ごとに並行で動きます。数えたのは、2026 年 10 月 6 日 12 時 24 分の時点の main (コミット `ba912d2fb`) から辿れるマージコミットすべてで、660 件です。枝の中で行ったマージも含みます (main の first-parent だけに絞ると 562 件)。履歴は 8 月 1 日に始まっているので、日付では絞っていません。
 
-git はコンフリクトそのものを記録しません。そこで、マージコミットの 2 つの親を `git merge-tree` でもう一度マージし直して、ぶつかったファイルを出しました。
+git はコンフリクトそのものを記録しません。そこで、それぞれのマージコミットの 2 つの親を `git merge-tree` でもう一度マージし直して、ぶつかったファイルを 1 行ずつ書き出しました。
 
 ```sh
-git rev-list --merges main | while read m; do
-  git merge-tree --write-tree --name-only --no-messages "$m^1" "$m^2" >/dev/null
-  [ $? -eq 1 ] && echo "$m"   # 1 はコンフリクトあり
-done
+git rev-list --merges ba912d2fb | while read m; do
+  out=$(git merge-tree --write-tree --name-only --no-messages "$m^1" "$m^2")
+  # 終了コード 1 はコンフリクトあり。出力の 1 行目は木の ID、2 行目以降がぶつかったファイル
+  [ $? -eq 1 ] && printf '%s\n' "$out" | tail -n +2 | awk -v m="$m" '{ print m "\t" $0 }'
+done > conflicts.tsv
 ```
 
-`--name-only` を付けると、2 行目以降にぶつかったファイルの名前が出ます。結果は次のとおりです。
+`conflicts.tsv` は「マージの ID、タブ、ぶつかったファイル」の 179 行になりました。マージの ID の種類を数えると 126 件です。ファイルはパスの頭 (`backlog/` の下か) と拡張子で分けています。結果は次のとおりです。
+
+![main から辿れるマージ 660 件のうち 126 件でコンフリクト。内訳は作業の記録だけが 94 件、記録とコードの両方が 11 件、記録以外だけが 21 件。Swift がぶつかったマージは 23 件、プロジェクトファイルは 0 件。](/TIL/images/merge-conflicts-ja.svg)
 
 | 項目 | 数 |
 | --- | --- |
