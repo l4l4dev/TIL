@@ -8,7 +8,7 @@ tags: ['Xcode', 'iOS', 'Simulator', 'AI']
 draft: false
 ---
 
-個人で作っている1日プランナー [FirnPlanner](https://firnplanner.l4l4.dev/) の iPhone 版を、折りたたみの iPhone Duo に合わせています。実機は手元に無いので、確かめるのはシミュレーターです。テストやビルドは AI のコーディングエージェント (Claude Code) がコマンドラインで回すので、Duo のシミュレーターも `xcrun simctl` で作ろうとしました。ここで 2 回つまずきました。
+個人で作っている1日プランナー [FirnPlanner](https://firnplanner.l4l4.dev/) では、いま iPhone 版を開発していて、折りたたみの iPhone Duo にも合わせています。実機は手元に無いので、確かめるのはシミュレーターです。テストやビルドは AI のコーディングエージェント (Claude Code) がコマンドラインで回すので、Duo のシミュレーターも `xcrun simctl` で作ろうとしました。ここで 2 回つまずきました。
 
 ## iOS 27.2 のランタイムがあるのに、Duo を作れない
 
@@ -72,14 +72,24 @@ iOS 27.2 (27.2 - 24B91016s) - com.apple.CoreSimulator.SimRuntime.iOS-27-2-iPhone
 
 数えたのは、`simctl list runtimes -j` の `supportedDeviceTypes` です。iOS 27.2 では、Duo だけが別のランタイムに分かれていました。手元の iOS 27.1 も、作れる機種は Duo だけです。
 
-なので、Duo を作るときは機種専用のランタイムを指定します。ランタイムを省くと、simctl が専用のものを選んでくれました。
+<!-- 図: ふつうの iOS 27.2 では Duo を作れず、専用のランタイム (iOS-27-2-iPhone19-4) では作れる。図は別に用意して、ここに日英で同じものを入れる -->
+
+なので、Duo を作るときは機種専用のランタイムを指定します。識別子を渡すと、作ったシミュレーターの UDID が返ってきます。
+
+```sh
+$ xcrun simctl create duo com.apple.CoreSimulator.SimDeviceType.iPhone-Duo \
+    com.apple.CoreSimulator.SimRuntime.iOS-27-2-iPhone19-4
+CAA756E8-69C3-4762-BA55-9F10F10130CD
+```
+
+ランタイムを省いても、simctl が専用のものを選んでくれました。
 
 ```sh
 $ xcrun simctl create duo com.apple.CoreSimulator.SimDeviceType.iPhone-Duo
 No runtime specified, using 'iOS 27.2 (27.2 - 24B91016s) - com.apple.CoreSimulator.SimRuntime.iOS-27-2-iPhone19-4'
 ```
 
-スクリプトに書くときは、名前の「iOS 27.2」ではなく識別子で選ぶのが確実です。名前で選ぶと、ふつうの 27.2 に当たって失敗することがあります。
+スクリプトに書くときは、上のように識別子を明示するのが確実です。名前の「iOS 27.2」では選ばないでください。名前で選ぶと、ふつうの 27.2 に当たって失敗することがあります。
 
 ## 開閉と回転は simctl ではできない
 

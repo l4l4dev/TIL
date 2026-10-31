@@ -8,7 +8,7 @@ tags: ['Xcode', 'iOS', 'Simulator', 'AI']
 draft: false
 ---
 
-I am adapting the iPhone version of [FirnPlanner](https://firnplanner.l4l4.dev/), a day planner I build on my own, to the foldable iPhone Duo. I do not have the device, so I check it in the simulator. Tests and builds are run from the command line by an AI coding agent (Claude Code), so I tried to create the Duo simulator with `xcrun simctl` as well. I got stuck twice.
+I am developing an iPhone version of [FirnPlanner](https://firnplanner.l4l4.dev/), a day planner I build on my own, and adapting it to the foldable iPhone Duo. I do not have the device, so I check it in the simulator. Tests and builds are run from the command line by an AI coding agent (Claude Code), so I tried to create the Duo simulator with `xcrun simctl` as well. I got stuck twice.
 
 ## There is an iOS 27.2 runtime, but the Duo cannot be created
 
@@ -72,14 +72,24 @@ I counted the device types each runtime supports.
 
 The counts come from `supportedDeviceTypes` in `simctl list runtimes -j`. In iOS 27.2, the Duo alone is split into its own runtime. The iOS 27.1 runtime on my machine also supports only the Duo.
 
-So to create a Duo, pass the device-specific runtime. When I left the runtime out, simctl picked the right one.
+<!-- Diagram: the regular iOS 27.2 runtime cannot create a Duo; the device-specific runtime (iOS-27-2-iPhone19-4) can. The diagram is prepared separately; insert the same asset here in both languages. -->
+
+So to create a Duo, pass the device-specific runtime. With the identifier, simctl prints the UDID of the new simulator.
+
+```sh
+$ xcrun simctl create duo com.apple.CoreSimulator.SimDeviceType.iPhone-Duo \
+    com.apple.CoreSimulator.SimRuntime.iOS-27-2-iPhone19-4
+CAA756E8-69C3-4762-BA55-9F10F10130CD
+```
+
+When I left the runtime out, simctl also picked the right one.
 
 ```sh
 $ xcrun simctl create duo com.apple.CoreSimulator.SimDeviceType.iPhone-Duo
 No runtime specified, using 'iOS 27.2 (27.2 - 24B91016s) - com.apple.CoreSimulator.SimRuntime.iOS-27-2-iPhone19-4'
 ```
 
-In scripts, select the runtime by identifier, not by the name iOS 27.2. Selecting by name can land on the regular 27.2 runtime and fail.
+In scripts, pass the identifier explicitly as above, not the name iOS 27.2. Selecting by name can land on the regular 27.2 runtime and fail.
 
 ## simctl cannot fold, unfold or rotate
 
