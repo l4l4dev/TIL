@@ -51,15 +51,26 @@ json.dump(catalog, sys.stdout, ensure_ascii=False, indent=2,
           sort_keys=True, separators=(",", " : "))
 ```
 
+`sort_keys=True` sorts the keys at every level, not only the top-level entries, down into `localizations` and `stringUnit`. Xcode also wrote every level in character code order, so sorting all levels is what I want here.
+
 ```sh
 echo '*.xcstrings filter=sort-xcstrings' >> .gitattributes
 git config --local filter.sort-xcstrings.clean "python3 scripts/sort-xcstrings.py"
-git add --renormalize .
+git add --renormalize -- '*.xcstrings'
+git diff --cached
 ```
+
+`git add --renormalize .` can also stage unrelated files to match other settings in `.gitattributes`, such as line endings. When I tried it in a repository with `* text=auto`, a text file with CRLF line endings got staged too. Limit it to `.xcstrings` files and read `git diff --cached` before committing.
 
 `git config --local` is per repository, so set it in every clone.
 
-When I rewrote the catalog with its keys in reverse order, `git status` showed ` M`, but `git diff` was empty. The content is the same, so `git add -u` clears it. The only difference between the file Xcode wrote and the output of this filter was how a key without translations is written as `{}`.
+A clean filter only normalizes what git stores (the index and the blob). It does not touch the file in the working tree.
+
+When I rewrote the catalog with its keys in reverse order and a different indent, `git status` showed ` M`, but `git diff` was empty. The file size changed, so git treats the file as modified, but `git diff` compares the filtered content, so there is no difference to show.
+
+Running `git add -u` at that point staged nothing, and the ` M` went away. The working tree file was still in reverse order, though. Rewriting the file itself into the sorted form is a separate step. `git checkout -- <file>` alone did not rewrite it, because git saw the content as unchanged. After confirming that `git diff` was empty, deleting the file and running `git checkout -- <file>` gave me the sorted form from the index.
+
+The only difference between the file Xcode wrote and the output of this filter was how a key without translations is written as `{}`.
 
 ## A stale mark: removed on purpose, or by accident
 
@@ -69,6 +80,6 @@ When I rewrote the catalog with its keys in reverse order, `git status` showed `
 
 - Building from the Xcode window rewrites a `.xcstrings` file that disagrees with the code, and reorders the whole file in Xcode's order
 - `xcodebuild` did not rewrite it
-- A git clean filter that sorts the keys removes the order-only diff
+- A git clean filter that sorts the keys removes the order-only diff. It sorts only what git stores, and leaves the working tree file as it is
 
 Tested with: Xcode 27.2 (27B52) on macOS 27.2.
