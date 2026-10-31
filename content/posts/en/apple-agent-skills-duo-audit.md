@@ -1,6 +1,6 @@
 ---
 title: 'Auditing for iPhone Duo with the official Apple agent skills that Xcode 27.2 can export'
-description: 'xcrun agent skills export writes out 11 official Apple skills for AI agents. Running app-resizability over an iPhone app still in development found 5 places that could break when a Duo opens or closes: a hard-coded width, a keyboard check against the whole screen, and a safe area read only once, among others.'
+description: 'xcrun agent skills export writes out 11 official Apple skills for AI agents. Running app-resizability over an iPhone app still in development found 4 pieces of code that could break when a Duo opens or closes (a hard-coded width, a keyboard check against the whole screen, and a safe area read only once, among others) and postures that had not been checked yet.'
 lang: en
 translationKey: apple-agent-skills-duo-audit
 publishDate: 2026-10-31
@@ -48,9 +48,9 @@ The items are split across 5 reference files.
 
 The skill is built to rewrite what it finds on the spot. This time I kept the code unchanged and only asked for a list of places to fix, because I wanted to decide on each one separately.
 
-## All 5 findings assumed the screen size never changes
+## Four code findings and one posture not checked yet
 
-These are the 5 findings. I have not seen any of them break on a device yet. They are places that could break when a Duo opens or closes.
+These are the 5 findings. Findings 1 to 4 are code written on the assumption that the screen size never changes. I have not seen any of them break on a device yet. They are places that could break when a Duo opens or closes. Finding 5 is not code. It is the postures I have not checked yet.
 
 1. **Folded or open was decided at a width of 600pt.** When a Duo is open in landscape, the system may put a vertical bar on the left or right edge, and the usable width shrinks by that much. Even the open screen could drop below 600pt and get the folded layout
 2. **Whether the keyboard was shown was decided against the whole screen.** When opening or closing changes the window size, the screen and the window no longer match
@@ -71,7 +71,7 @@ GeometryReader { proxy in
 }
 ```
 
-Switch on the size class instead.
+One option for a fix is to switch on the size class.
 
 ```swift
 @Environment(\.horizontalSizeClass) private var sizeClass
@@ -84,6 +84,8 @@ var body: some View {
     }
 }
 ```
+
+This is not a drop-in replacement for the 600pt check. A size class describes the kind of screen and does not promise a particular width. Whether the two-column layout has enough room in regular still has to be checked by capturing each Duo posture.
 
 The second one compares the keyboard frame with `UIScreen.main.bounds`. Type-checking with the iOS 27 SDK warns that `UIScreen.main` is deprecated since iOS 26. The warning text also suggests getting the screen from the window scene.
 
@@ -110,7 +112,7 @@ I thought of the iPhone as a portrait device, so I only worried about the side s
 
 On the same day, I had the Mac version audited with `swiftui-specialist`. These were unrelated to Duo, and 4 came up.
 
-- A `@State` without `private` runs its initial value expression every time the parent redraws
+- A `@State` without `private`. According to the skill's `dataflow.md`, the `@State` macro evaluates an initial value expression (such as `= Store()`) just once only when the getter is `private` or `fileprivate`. Otherwise the expression is evaluated every time the view value is created
 - A `DateFormatter` for dates was created on every call
 - `ForEach` identified rows by position (`\.offset`)
 - APIs with recommended replacements, such as `foregroundColor`, were still in use
@@ -119,6 +121,6 @@ On the same day, I had the Mac version audited with `swiftui-specialist`. These 
 
 - Xcode 27.2 can export 11 official Apple agent skills with `xcrun agent skills export <folder>`
 - For Duo, use `app-resizability`. It finds hard-coded widths, `UIScreen.main`, a safe area read only once, and window lookups through `UIApplication.shared`, all on the assumption that the screen size changes
-- None of the 5 is fixed yet. When I fix them, I plan to capture the 3 Duo postures and compare before and after
+- The audit found 4 code issues and postures not checked yet. The code is not fixed yet. When I fix it, I plan to capture the 3 Duo postures and compare before and after
 
 Tested with: Xcode 27.2 (27B52) on macOS 27.2. The audit itself used skills exported from Xcode 27.2 RC.
