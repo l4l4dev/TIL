@@ -72,7 +72,7 @@ I counted the device types each runtime supports.
 
 The counts come from `supportedDeviceTypes` in `simctl list runtimes -j`. In iOS 27.2, the Duo alone is split into its own runtime. The iOS 27.1 runtime on my machine also supports only the Duo.
 
-<!-- Diagram: the regular iOS 27.2 runtime cannot create a Duo; the device-specific runtime (iOS-27-2-iPhone19-4) can. The diagram is prepared separately; insert the same asset here in both languages. -->
+![Comparison diagram: the regular iOS 27.2 runtime cannot create an iPhone Duo simulator, while the Duo-specific runtime can](/TIL/images/iphone-duo-runtime-compatibility.svg)
 
 So to create a Duo, pass the device-specific runtime. With the identifier, simctl prints the UDID of the new simulator.
 
