@@ -72,7 +72,7 @@ iOS 27.2 (27.2 - 24B91016s) - com.apple.CoreSimulator.SimRuntime.iOS-27-2-iPhone
 
 数えたのは、`simctl list runtimes -j` の `supportedDeviceTypes` です。iOS 27.2 では、Duo だけが別のランタイムに分かれていました。手元の iOS 27.1 も、作れる機種は Duo だけです。
 
-<!-- 図: ふつうの iOS 27.2 では Duo を作れず、専用のランタイム (iOS-27-2-iPhone19-4) では作れる。図は別に用意して、ここに日英で同じものを入れる -->
+![iPhone Duoのシミュレーターは、通常のiOS 27.2ランタイムでは作成できず、Duo専用ランタイムでは作成できることを示す比較図](/TIL/images/iphone-duo-runtime-compatibility.svg)
 
 なので、Duo を作るときは機種専用のランタイムを指定します。識別子を渡すと、作ったシミュレーターの UDID が返ってきます。
 
