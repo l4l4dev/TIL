@@ -1,6 +1,6 @@
 ---
 title: 'xcprojformatter silently drops keys it does not know'
-description: 'In an Xcode 27 JSON project file (project.xcproj), a one-letter typo in "build-settings" makes xcodebuild ignore those settings without an error. xcprojformatter does not complain either; it removes the block from its output. Checking that the formatter output matches the file catches the typo.'
+description: 'In an Xcode 27 JSON project file (project.xcproj), a one-letter typo in "build-settings" makes xcodebuild ignore those settings without an error. xcprojformatter does not complain either; it removes the block from its output. Diffing the formatter output against the file catches this typo.'
 lang: en
 translationKey: xcprojformatter-drops-unknown-keys
 publishDate: 2026-10-31
@@ -91,12 +91,19 @@ Without `--update`, the formatter prints the formatted file to standard output. 
 xcrun xcprojformatter Demo.xcodeproj | diff -u Demo.xcodeproj/project.xcproj -
 ```
 
-For a correct file, the diff is empty and the exit code is 0. With a typo, you get the same removal as above and exit code 1. FirnPlanner has this in a script that runs after hand edits to the JSON.
+On the file before the hand edit, the diff was empty and the exit code was 0. With the `"build-setings"` typo, it showed the same removal as above and exited with 1. FirnPlanner has this in a script that runs after hand edits to the JSON.
 
-Instead of editing the JSON by hand, you can also use commands such as `xcrun xcodeproj setting set`. The commands write the correct keys, so no typo gets in.
+This diff only tells you whether the formatter output matches the current file. It does not check that the project is valid.
+
+- It does not catch a misspelled setting name. Changing `SWIFT_ACTIVE_COMPILATION_CONDITIONS` to `SWIFT_ACTIVE_COMPILATION_CONDITION` leaves the diff empty, because any key name inside `"build-settings"` is kept. The build also succeeds
+- Formatting differences that are not typos, such as whitespace, also produce a diff. Changing `"build-settings": {` to `"build-settings":{` was enough
+
+What it catches is a structural key that xcprojformatter does not know, like the one in this post.
+
+Instead of editing the JSON by hand, you can also use commands such as `xcrun xcodeproj setting set`. The command writes the structural keys, so this kind of typo cannot get in. It writes the setting name as you pass it, so that part is still up to you.
 
 ## Summary
 
 - In an Xcode 27 `project.xcproj`, unknown keys are silently ignored by both xcodebuild and `xcrun xcodeproj`
 - `xcrun xcprojformatter --update` silently removes unknown keys
-- An empty diff from `xcrun xcprojformatter <project> | diff -u <project>/project.xcproj -` tells you there is no such typo
+- `xcrun xcprojformatter <project> | diff -u <project>/project.xcproj -` catches typos in structural keys. It does not catch misspelled setting names, and formatting-only changes also show up, so it is not a full validator

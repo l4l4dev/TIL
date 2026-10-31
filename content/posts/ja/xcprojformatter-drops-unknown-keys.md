@@ -1,6 +1,6 @@
 ---
 title: 'xcprojformatter は知らないキーを黙って捨てる'
-description: 'Xcode 27 の JSON 形式のプロジェクト (project.xcproj) で "build-settings" を 1 文字打ち間違えると、xcodebuild はエラーを出さずにその設定を無視する。xcprojformatter もエラーを出さず、整形の結果からそのブロックを消す。整形の出力と元のファイルの diff が空かどうかで、打ち間違いを見つけられる。'
+description: 'Xcode 27 の JSON 形式のプロジェクト (project.xcproj) で "build-settings" を 1 文字打ち間違えると、xcodebuild はエラーを出さずにその設定を無視する。xcprojformatter もエラーを出さず、整形の結果からそのブロックを消す。整形の出力と元のファイルの diff を見ると、この打ち間違いは見つけられる。'
 lang: ja
 translationKey: xcprojformatter-drops-unknown-keys
 publishDate: 2026-10-31
@@ -91,12 +91,19 @@ Xcode 27.2 には、このファイルを整形する `xcrun xcprojformatter` �
 xcrun xcprojformatter Demo.xcodeproj | diff -u Demo.xcodeproj/project.xcproj -
 ```
 
-正しいファイルなら差分は空で、終了コードは 0 です。打ち間違いがあると、上と同じ削除の差分が出て、終了コードは 1 になります。FirnPlanner では、これをスクリプトにして、JSON を手で直したあとに走らせています。
+手で直す前のファイルでは差分は空で、終了コードは 0 でした。`"build-setings"` の打ち間違いを入れると、上と同じ削除の差分が出て、終了コードは 1 になりました。FirnPlanner では、これをスクリプトにして、JSON を手で直したあとに走らせています。
 
-JSON を手で直す代わりに、`xcrun xcodeproj setting set` などのコマンドで直す手もあります。コマンドは正しいキーで書くので、打ち間違いが入りません。
+ただし、この diff で分かるのは「整形の出力が今のファイルと同じかどうか」だけです。プロジェクトの書き方として正しいかを確かめるものではありません。
+
+- 設定名の打ち間違いは見つからない。`SWIFT_ACTIVE_COMPILATION_CONDITIONS` を `SWIFT_ACTIVE_COMPILATION_CONDITION` にしても、`"build-settings"` の中のキーはどんな名前でも残るので、差分は空のまま。ビルドも通る
+- 空白の違いなど、打ち間違いではない整形の差でも差分が出る。`"build-settings": {` を `"build-settings":{` にしただけでも、差分が出た
+
+見つけられるのは、今回のような、xcprojformatter が知らない構造のキーです。
+
+JSON を手で直す代わりに、`xcrun xcodeproj setting set` などのコマンドで直す手もあります。構造のキーはコマンドが書くので、この種の打ち間違いは入りません。設定名は渡したとおりに書かれるので、そちらは自分で確かめます。
 
 ## まとめ
 
 - Xcode 27 の `project.xcproj` で知らないキーを書くと、xcodebuild も `xcrun xcodeproj` も黙って無視する
 - `xcrun xcprojformatter --update` は、知らないキーを黙って消す
-- `xcrun xcprojformatter <project> | diff -u <project>/project.xcproj -` の差分が空かどうかで、打ち間違いを見つけられる
+- `xcrun xcprojformatter <project> | diff -u <project>/project.xcproj -` で、構造のキーの打ち間違いは見つけられる。設定名の打ち間違いは見つからず、整形だけの違いでも差分が出るので、検証の代わりにはならない
