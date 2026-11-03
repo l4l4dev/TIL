@@ -3,7 +3,7 @@ title: 'The .prohibited activation policy stopped a macOS test host from coming 
 description: 'Every xcodebuild test run brought the app launched as the test host to the front and took key input from whatever app I was typing in. Setting the activation policy to .prohibited in applicationWillFinishLaunching stopped it; .accessory did not. I checked by logging the frontmost app.'
 lang: en
 translationKey: test-host-stays-in-background
-publishDate: 2026-11-05
+publishDate: 2026-11-04
 tags: ['Xcode', 'macOS', 'Testing']
 draft: false
 ---

@@ -3,7 +3,7 @@ title: 'macOS アプリのユニットテスト中にテストホストが前面
 description: 'xcodebuild test を流すたびに、テストホストとして起動したアプリが前面に来て、作業中のアプリからキー入力を奪っていた。applicationWillFinishLaunching で活性化のポリシーを .prohibited にすると止まり、.accessory では止まらなかった。前面のアプリを記録して確かめた。'
 lang: ja
 translationKey: test-host-stays-in-background
-publishDate: 2026-11-05
+publishDate: 2026-11-04
 tags: ['Xcode', 'macOS', 'Testing']
 draft: false
 ---
