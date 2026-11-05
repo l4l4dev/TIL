@@ -104,6 +104,8 @@ struct HingeSwiftTests {
 - 読み返す角度は、途中の値では設定値とずれる。比べるなら幅を持たせる
 - 角度だけでレイアウトは決まらない。テストでは角度を設定した後、画面の表示そのものを確かめる
 
+試したプロジェクトは [samples/xcuihinge](https://github.com/l4l4dev/TIL/tree/main/samples/xcuihinge) に置きました。表の値は、この中の `HingeSettleTests` で取ったものです。
+
 確かめた環境は次のとおりです。
 
 - Xcode 27.3 beta 1 (27C5020n)

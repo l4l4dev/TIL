@@ -104,6 +104,8 @@ When I first read the screen after only `sleep(1)`, I got regular at 45°, which
 - For angles in between, the value you read back differs from the one you set. Compare with a tolerance
 - The angle alone does not decide the layout. After setting it, check what is actually on screen
 
+The project I used is in [samples/xcuihinge](https://github.com/l4l4dev/TIL/tree/main/samples/xcuihinge). The values in the tables come from `HingeSettleTests` in it.
+
 Environment:
 
 - Xcode 27.3 beta 1 (27C5020n)
