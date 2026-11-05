@@ -46,21 +46,20 @@ final class HingeXCTests: XCTestCase {
 Swift Testing では `Testing` と `XCUIAutomation` を読み込み、Suite を `@MainActor` にしました。ターゲットは普通の UI テストのターゲットで、特別な設定は加えていません。
 
 ```swift
-import Foundation
 import Testing
 import XCUIAutomation
 
 @MainActor
 struct HingeSwiftTests {
-    @Test func openFlatShowsRegularWidth() async throws {
+    @Test func openFlatShowsRegularWidth() throws {
         let app = XCUIApplication()
         app.launch()
 
         let hinge = try #require(XCUIDevice.shared.hinge)
         hinge.angle = .pi
-        try await Task.sleep(for: .seconds(1))
 
-        #expect(app.staticTexts["sizeClass"].label == "regular")
+        let sizeClass = app.staticTexts["sizeClass"]
+        #expect(sizeClass.wait(for: \.label, toEqual: "regular", timeout: 5))
     }
 }
 ```
