@@ -1,0 +1,497 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		179EB1B0136E7AE347771511 /* HingeSweepTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09709E480AC427640E740400 /* HingeSweepTests.swift */; };
+		6D5173C32E6FC1CA7EAE854B /* HingeArticleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F849A63FCEEDB57EFA2158F /* HingeArticleTests.swift */; };
+		7377353B88CF2ED7631527D7 /* HingeLabApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56387E766EBF63898E35C90F /* HingeLabApp.swift */; };
+		811F8A444C52C439C2F871E0 /* HingeSettleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D26B8350554EFBD183C1E6D9 /* HingeSettleTests.swift */; };
+		D1181AB9D02BBBA7576B1CFB /* HingeSwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20959710483EBA8FC8DDDA29 /* HingeSwiftTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		398C19C9278D5CA33EB553B8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 218AEBCFAF13C8A84E9CEE72 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9ADECC63599C63FA6FF257AF;
+			remoteInfo = HingeLab;
+		};
+		751CE81CCC4E0A65027018CB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 218AEBCFAF13C8A84E9CEE72 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9ADECC63599C63FA6FF257AF;
+			remoteInfo = HingeLab;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		09709E480AC427640E740400 /* HingeSweepTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HingeSweepTests.swift; sourceTree = "<group>"; };
+		20959710483EBA8FC8DDDA29 /* HingeSwiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HingeSwiftTests.swift; sourceTree = "<group>"; };
+		3233DCF170AE90734AB2AF47 /* HingeLab.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = HingeLab.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		56387E766EBF63898E35C90F /* HingeLabApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HingeLabApp.swift; sourceTree = "<group>"; };
+		8F849A63FCEEDB57EFA2158F /* HingeArticleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HingeArticleTests.swift; sourceTree = "<group>"; };
+		94CAC29092CA9081161CAFC5 /* HingeLabSwiftTestingUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = HingeLabSwiftTestingUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D26B8350554EFBD183C1E6D9 /* HingeSettleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HingeSettleTests.swift; sourceTree = "<group>"; };
+		E6CCAF719B17F69F2D558AB0 /* HingeLabUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = HingeLabUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		13301243DA0A97CD92B83D61 = {
+			isa = PBXGroup;
+			children = (
+				73637DAB02095DE8F1BD22B2 /* App */,
+				E2717BEE648D531EC56D7C7F /* SwiftTestingUITests */,
+				C2124DDE627944ADED82AFC9 /* UITests */,
+				78FAD5F026D2207AAFEBCD1F /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		73637DAB02095DE8F1BD22B2 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				56387E766EBF63898E35C90F /* HingeLabApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		78FAD5F026D2207AAFEBCD1F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3233DCF170AE90734AB2AF47 /* HingeLab.app */,
+				94CAC29092CA9081161CAFC5 /* HingeLabSwiftTestingUITests.xctest */,
+				E6CCAF719B17F69F2D558AB0 /* HingeLabUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C2124DDE627944ADED82AFC9 /* UITests */ = {
+			isa = PBXGroup;
+			children = (
+				8F849A63FCEEDB57EFA2158F /* HingeArticleTests.swift */,
+				D26B8350554EFBD183C1E6D9 /* HingeSettleTests.swift */,
+				09709E480AC427640E740400 /* HingeSweepTests.swift */,
+			);
+			path = UITests;
+			sourceTree = "<group>";
+		};
+		E2717BEE648D531EC56D7C7F /* SwiftTestingUITests */ = {
+			isa = PBXGroup;
+			children = (
+				20959710483EBA8FC8DDDA29 /* HingeSwiftTests.swift */,
+			);
+			path = SwiftTestingUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		0611CE06470C9A2680F3B406 /* HingeLabSwiftTestingUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 77F5BADF8436D45D2B3D2F9F /* Build configuration list for PBXNativeTarget "HingeLabSwiftTestingUITests" */;
+			buildPhases = (
+				92FB96A5A07CD0964CD68070 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5F641BEE39CD185DBFF11620 /* PBXTargetDependency */,
+			);
+			name = HingeLabSwiftTestingUITests;
+			packageProductDependencies = (
+			);
+			productName = HingeLabSwiftTestingUITests;
+			productReference = 94CAC29092CA9081161CAFC5 /* HingeLabSwiftTestingUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		6762B83340F213A055217266 /* HingeLabUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1903BA3BC332FD928B391834 /* Build configuration list for PBXNativeTarget "HingeLabUITests" */;
+			buildPhases = (
+				59B04A7E14A0D6454174194C /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				881C09D17F230758986C2527 /* PBXTargetDependency */,
+			);
+			name = HingeLabUITests;
+			packageProductDependencies = (
+			);
+			productName = HingeLabUITests;
+			productReference = E6CCAF719B17F69F2D558AB0 /* HingeLabUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		9ADECC63599C63FA6FF257AF /* HingeLab */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E101051C43F94A3A6B2F2401 /* Build configuration list for PBXNativeTarget "HingeLab" */;
+			buildPhases = (
+				A7DDAD415064CF6CE9AB07F5 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = HingeLab;
+			packageProductDependencies = (
+			);
+			productName = HingeLab;
+			productReference = 3233DCF170AE90734AB2AF47 /* HingeLab.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		218AEBCFAF13C8A84E9CEE72 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					0611CE06470C9A2680F3B406 = {
+						ProvisioningStyle = Automatic;
+						TestTargetID = 9ADECC63599C63FA6FF257AF;
+					};
+					6762B83340F213A055217266 = {
+						ProvisioningStyle = Automatic;
+						TestTargetID = 9ADECC63599C63FA6FF257AF;
+					};
+					9ADECC63599C63FA6FF257AF = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = E9218541F74121E026BAC235 /* Build configuration list for PBXProject "HingeLab" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 13301243DA0A97CD92B83D61;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 78FAD5F026D2207AAFEBCD1F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				9ADECC63599C63FA6FF257AF /* HingeLab */,
+				0611CE06470C9A2680F3B406 /* HingeLabSwiftTestingUITests */,
+				6762B83340F213A055217266 /* HingeLabUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		59B04A7E14A0D6454174194C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6D5173C32E6FC1CA7EAE854B /* HingeArticleTests.swift in Sources */,
+				811F8A444C52C439C2F871E0 /* HingeSettleTests.swift in Sources */,
+				179EB1B0136E7AE347771511 /* HingeSweepTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		92FB96A5A07CD0964CD68070 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D1181AB9D02BBBA7576B1CFB /* HingeSwiftTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A7DDAD415064CF6CE9AB07F5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7377353B88CF2ED7631527D7 /* HingeLabApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5F641BEE39CD185DBFF11620 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9ADECC63599C63FA6FF257AF /* HingeLab */;
+			targetProxy = 398C19C9278D5CA33EB553B8 /* PBXContainerItemProxy */;
+		};
+		881C09D17F230758986C2527 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9ADECC63599C63FA6FF257AF /* HingeLab */;
+			targetProxy = 751CE81CCC4E0A65027018CB /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		140CE6715BE7C3F9F6132182 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.example.hingelab.HingeLab;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		14CD790958FA5785E7686134 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.example.hingelab.HingeLabUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = HingeLab;
+			};
+			name = Debug;
+		};
+		49726AF5B42FD9AC4F7BE3F0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.example.hingelab.HingeLabSwiftTestingUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = HingeLab;
+			};
+			name = Release;
+		};
+		4FC956DD3727B2F3BE1C1B21 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.example.hingelab.HingeLabUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = HingeLab;
+			};
+			name = Release;
+		};
+		6B92006956AAAEA711DA1C05 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.example.hingelab.HingeLab;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		6CCC71A5FDBBE98D0FB3DDF8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		72897C84D81E9B19CBEB0FFA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.example.hingelab.HingeLabSwiftTestingUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = HingeLab;
+			};
+			name = Debug;
+		};
+		D8600AC5CBE6D51B5218D836 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1903BA3BC332FD928B391834 /* Build configuration list for PBXNativeTarget "HingeLabUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				14CD790958FA5785E7686134 /* Debug */,
+				4FC956DD3727B2F3BE1C1B21 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		77F5BADF8436D45D2B3D2F9F /* Build configuration list for PBXNativeTarget "HingeLabSwiftTestingUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				72897C84D81E9B19CBEB0FFA /* Debug */,
+				49726AF5B42FD9AC4F7BE3F0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		E101051C43F94A3A6B2F2401 /* Build configuration list for PBXNativeTarget "HingeLab" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6B92006956AAAEA711DA1C05 /* Debug */,
+				140CE6715BE7C3F9F6132182 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		E9218541F74121E026BAC235 /* Build configuration list for PBXProject "HingeLab" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6CCC71A5FDBBE98D0FB3DDF8 /* Debug */,
+				D8600AC5CBE6D51B5218D836 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 218AEBCFAF13C8A84E9CEE72 /* Project object */;
+}
