@@ -42,6 +42,8 @@ In all three runs, a ran from 0 to 1 second, b from 1 to 2, and c from 2 to 3, a
 
 The threads, on the other hand, did not stay the same. I logged `pthread_mach_thread_np(pthread_self())` at the start and end of each test. In every run, each test ran on a different thread, and within a single test the thread sometimes changed across an `await`. `.serialized` controls the order tests run in, not the thread they run on. A test that assumes it stays on one thread will not get that from `.serialized`.
 
+![Without traits, tests a, b and c all run from 0 to 1 second, and the values they finish with are 1,025, 1,056 and 1,013, short of 3,000. With .serialized, a runs from 0 to 1 second, b from 1 to 2 and c from 2 to 3, and the value goes 1,000, 2,000, 3,000. The threads were 9987 to 9731 for a, 4611 to 10499 for b and 3091 to 4867 for c, so they changed between tests and within a test.](/TIL/images/swift-testing-serialized-en.svg)
+
 Other things I saw:
 
 - Tests inside a `.serialized` suite ran one at a time, but they ran in parallel with tests in other suites
@@ -86,6 +88,8 @@ Whichever side had the shorter limit, that limit applied. A limit on a suite is 
 Cancelling a Swift task does not force it to stop. The code has to check whether it was cancelled and stop on its own. `Task.sleep` throws `CancellationError` as soon as it is cancelled. So I also put `.timeLimit(.minutes(1))` on a test that blocks its thread with `Thread.sleep(forTimeInterval: 90)` instead of `Task.sleep`.
 
 The time limit issue was recorded at about the same time as for the other tests. Even so, the test kept waiting for the full 90 seconds and failed about 90 seconds after it started. The whole test run did not finish until this test did. `.timeLimit` cannot stop code that does not respond to cancellation.
+
+![Both tests have a 1 minute limit and wait 90 seconds. The test that waits with Task.sleep throws CancellationError and fails at about 64 seconds. The test that waits with Thread.sleep has the time limit recorded at about the same time as the others, about 64 seconds, but keeps running and fails at 90 seconds. Both messages read Time limit was exceeded: 60.000 seconds.](/TIL/images/swift-testing-timelimit-en.svg)
 
 ## Summary
 
