@@ -91,13 +91,32 @@ The time limit issue was recorded at about the same time as for the other tests.
 
 ![Both tests have a 1 minute limit and wait 90 seconds. The test that waits with Task.sleep throws CancellationError and fails at about 64 seconds. The test that waits with Thread.sleep has the time limit recorded at about the same time as the others, about 64 seconds, but keeps running and fails at 90 seconds. Both messages read Time limit was exceeded: 60.000 seconds.](/TIL/images/swift-testing-timelimit-en.svg)
 
+## UI tests run in Xcode ran one at a time even without traits
+
+Starting with Xcode 27.3 beta, UI tests can also be written with Swift Testing and XCUIAutomation. Everything above was tested with `swift test`, so I also took a quick look at an Xcode project, using `xcodebuild test` on an iOS 27.3 simulator.
+
+I put the same three tests, each of which only waits 3 seconds, in a UI test target and in a unit test target, and ran them with Xcode parallel testing (`-parallel-testing-enabled`) on and off. Both of the 2 runs gave the same result.
+
+| Target | Xcode parallel testing | The three tests |
+|---|---|---|
+| Unit tests | On | Started together and finished in about 3 seconds |
+| Unit tests | Off | Ran one at a time and took about 9 seconds |
+| UI tests | On | Ran one at a time and took about 9 seconds |
+
+In the unit test target, the tests ran in parallel only when Xcode parallel testing was on. This differs from plain `swift test`, which ran them in parallel without any option. In the UI test target, the tests ran one at a time even with it on. `@MainActor` tests that launch the app and wait 5 seconds also ran one at a time, both in a `.serialized` suite and in a suite without traits. I think UI tests are less likely than unit tests to break each other by touching the same state.
+
+A UI test with `.timeLimit(.minutes(1))` had the time limit recorded at 60 seconds. After that, the process running the tests ended, `Restarting after unexpected exit, crash, or test timeout` was printed, and the process started again to run the remaining tests. The result bundle recorded `Test exceeded execution time allowance of 1 minute`. The test waiting with `Task.sleep` was cancelled and returned. The test waiting for an element with `waitForExistence(timeout: 90)` kept looking for the element after the limit was recorded, and the process ended before the wait returned. Over 3 runs, the process ended between about 73 and 90 seconds after the test started, a different time each run. For the `Task.sleep` test, I counted 2 runs, leaving out 1 run where another measurement was using the same simulator at the same time.
+
+The restart was not limited to UI tests. In the unit test target, `xcodebuild test` also restarted the process after a test went over its limit. With `swift test`, the test that blocks its thread ran to the end, and the same process went on to run the remaining tests. When tests run in Xcode, it looks like a test that does not respond to cancellation is stopped by ending its process.
+
 ## Summary
 
 - Without traits, tests run in parallel. Tests that touch the same state overwrite each other and break it
 - `.serialized` runs tests one at a time, but not on the same thread
-- `.timeLimit` can only be written in minutes. Going over it cancels the task and fails the test, but code that blocks its thread keeps running to the end
+- `.timeLimit` can only be written in minutes. Going over it cancels the task and fails the test, but with `swift test`, code that blocks its thread keeps running to the end
+- UI tests run in Xcode ran one at a time even without traits. Going over `.timeLimit` restarted the process running the tests
 
-The package I used is in [samples/swift-testing-traits](https://github.com/l4l4dev/TIL/tree/main/samples/swift-testing-traits). Run `swift test --filter ParallelTests` for the parallel and `.serialized` tests, and `swift test --filter TimeLimitTests` for `.timeLimit`. `TimeLimitTests` includes tests that fail on purpose and takes about 90 seconds.
+The package I used is in [samples/swift-testing-traits](https://github.com/l4l4dev/TIL/tree/main/samples/swift-testing-traits). Run `swift test --filter ParallelTests` for the parallel and `.serialized` tests, and `swift test --filter TimeLimitTests` for `.timeLimit`. `TimeLimitTests` includes tests that fail on purpose and takes about 90 seconds. The project for the UI test section is in [samples/swift-testing-traits-xcode](https://github.com/l4l4dev/TIL/tree/main/samples/swift-testing-traits-xcode).
 
 I tested with:
 
@@ -105,6 +124,12 @@ I tested with:
 - Swift 6.4.2
 - macOS 27.2
 - `swift test`
+
+The UI test section was tested with:
+
+- Xcode 27.3 beta 1 (27C5020n)
+- iOS 27.3 simulator (iPhone 18 Pro)
+- `xcodebuild test`
 
 References:
 
