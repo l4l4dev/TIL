@@ -91,13 +91,32 @@ Swift のタスクのキャンセルは、キャンセルされたかどうか�
 
 ![どちらのテストにも 1 分の制限を付け、90 秒待たせた。Task.sleep で待つテストは CancellationError を投げ、約 64 秒で失敗した。Thread.sleep で待つテストは、ほかのテストと同じころ (約 64 秒) に時間切れが記録されたが、90 秒まで動き続けてから失敗した。メッセージはどちらも Time limit was exceeded: 60.000 seconds。](/TIL/images/swift-testing-timelimit-ja.svg)
 
+## Xcode で流す UI テストは、何も付けなくても 1 つずつ流れた
+
+Xcode 27.3 beta から、UI テストも Swift Testing と XCUIAutomation で書けるようになりました。ここまでは `swift test` で確かめたので、Xcode のプロジェクトでも同じかを、iOS 27.3 のシミュレータと `xcodebuild test` で軽く確かめました。
+
+3 秒待つだけの 3 つのテストを、UI テストのターゲットと単体テストのターゲットに同じように置き、Xcode の並列実行の設定 (`-parallel-testing-enabled`) を変えて流しました。2 回流して、どちらも同じ結果でした。
+
+| ターゲット | Xcode の並列実行 | 3 つのテスト |
+|---|---|---|
+| 単体テスト | 有効 | 同時に始まり、約 3 秒で終わった |
+| 単体テスト | 無効 | 1 つずつ流れ、約 9 秒かかった |
+| UI テスト | 有効 | 1 つずつ流れ、約 9 秒かかった |
+
+単体テストのターゲットは、Xcode の並列実行を有効にしたときだけテストが同時に走りました。何も指定しない `swift test` で同時に走ったのとは違います。UI テストのターゲットは、有効にしても 1 つずつ流れました。アプリを起動して 5 秒待つ `@MainActor` のテストも、`.serialized` を付けた Suite と付けない Suite のどちらでも 1 つずつ流れました。UI テストでは、同じ状態を触るテスト同士が値を上書きし合う心配は、単体テストより小さいと考えています。
+
+`.timeLimit(.minutes(1))` を付けた UI テストは、60 秒で時間切れが記録されました。その後、テストを動かしていたプロセスが終わり、`Restarting after unexpected exit, crash, or test timeout` と出て起動し直され、残りのテストが流れました。結果のバンドルには `Test exceeded execution time allowance of 1 minute` と記録されていました。`Task.sleep` で待つテストは、キャンセルされて 60 秒で待ちから戻りました。`waitForExistence(timeout: 90)` で要素を待つテストは、時間切れの後も要素を探し続け、待ちから戻る前にプロセスが終わりました。3 回流して、プロセスが終わったのは開始から約 73〜90 秒で、毎回違いました。`Task.sleep` のテストは、同じシミュレータでほかの計測を同時に流していた 1 回を除いた 2 回で確かめました。
+
+プロセスが起動し直されたのは、UI テストに限りませんでした。単体テストのターゲットでも、`xcodebuild test` で流すと、時間切れの後にプロセスが起動し直されました。`swift test` では、スレッドを止めるテストも最後まで動き、プロセスはそのまま残りのテストを流していました。Xcode で流すときは、キャンセルに応えないテストでも、プロセスを終わらせて止めているようです。
+
 ## まとめ
 
 - 何も付けないと、テストは同時に走る。同じ状態を触るテストは、値が上書きされて壊れる
 - `.serialized` は、テストを 1 つずつ流す。ただし、スレッドは揃わない
-- `.timeLimit` は分でしか書けない。超えるとタスクがキャンセルされて失敗するが、スレッドを止めて待つコードは最後まで動き続ける
+- `.timeLimit` は分でしか書けない。超えるとタスクがキャンセルされて失敗するが、`swift test` では、スレッドを止めて待つコードは最後まで動き続ける
+- Xcode で流す UI テストは、何も付けなくても 1 つずつ流れた。`.timeLimit` を超えると、テストを動かすプロセスが起動し直された
 
-試したパッケージは [samples/swift-testing-traits](https://github.com/l4l4dev/TIL/tree/main/samples/swift-testing-traits) に置きました。`swift test --filter ParallelTests` で同時に走るテストと `.serialized` を、`swift test --filter TimeLimitTests` で `.timeLimit` を試せます。`TimeLimitTests` はわざと失敗するテストを含み、終わるまで約 90 秒かかります。
+試したパッケージは [samples/swift-testing-traits](https://github.com/l4l4dev/TIL/tree/main/samples/swift-testing-traits) に置きました。`swift test --filter ParallelTests` で同時に走るテストと `.serialized` を、`swift test --filter TimeLimitTests` で `.timeLimit` を試せます。`TimeLimitTests` はわざと失敗するテストを含み、終わるまで約 90 秒かかります。UI テストの節で使ったプロジェクトは [samples/swift-testing-traits-xcode](https://github.com/l4l4dev/TIL/tree/main/samples/swift-testing-traits-xcode) に置きました。
 
 確かめた環境は次のとおりです。
 
@@ -105,6 +124,12 @@ Swift のタスクのキャンセルは、キャンセルされたかどうか�
 - Swift 6.4.2
 - macOS 27.2
 - `swift test` で実行
+
+UI テストの節は、次の環境で確かめました。
+
+- Xcode 27.3 beta 1 (27C5020n)
+- iOS 27.3 のシミュレータ (iPhone 18 Pro)
+- `xcodebuild test` で実行
 
 参考にしたもの:
 
