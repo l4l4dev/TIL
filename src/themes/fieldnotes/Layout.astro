@@ -4,11 +4,11 @@ import './theme.css';
 import GoogleAnalytics from '@/components/GoogleAnalytics.astro';
 import ThemeProvider from '@/components/ThemeProvider.astro';
 import ThemeSwitch from './ThemeSwitch.astro';
-interface Props {lang:Locale; title:string; alternate:string; article?:boolean; description?:string; hasTranslation?:boolean; publishDate?:Date; tags?:string[];}
-const {lang,title,alternate,article=false,description=ui[lang].description,hasTranslation=true,publishDate,tags=[]}=Astro.props;
+interface Props {lang:Locale; title:string; alternate:string; article?:boolean; description?:string; hasTranslation?:boolean; publishDate?:Date; tags?:string[]; canonicalPath?:string;}
+const {lang,title,alternate,article=false,description=ui[lang].description,hasTranslation=true,publishDate,tags=[],canonicalPath}=Astro.props;
 const preview=Astro.url.pathname.includes('/theme-preview/');
 const home=href(lang,preview?'theme-preview/':'');
-const canonical=new URL(Astro.url.pathname,Astro.site);
+const canonical=new URL(canonicalPath??Astro.url.pathname,Astro.site);
 const alternateUrl=new URL(alternate,Astro.site);
 const siteName='l4l4dev / notes';
 const ogTitle=publishDate?title:`${title} · l4l4dev`;
