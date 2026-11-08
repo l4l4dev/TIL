@@ -1,6 +1,6 @@
 ---
-title: 'After installing the Xcode plugin, about 10,000 characters of skill descriptions were loaded every turn'
-description: 'Installing the Xcode 27.3 beta plugin in Claude Code means the descriptions of 19 skills, 10,503 characters in total, are loaded every turn. 6 skills I had copied by hand with the same names were still there. The description listing has a budget, and over it, descriptions of the least-used skills are dropped.'
+title: 'After installing the Xcode plugin, skill descriptions grew by about 10,000 characters'
+description: 'Installing the Xcode 27.3 beta plugin in Claude Code adds 19 skills whose descriptions total 10,503 characters. Descriptions are loaded every turn as a listing, but the listing has a budget, and over it, descriptions of the least-used skills are dropped. 6 skills I had copied by hand with the same names were still there.'
 lang: en
 translationKey: plugin-skill-descriptions-always-loaded
 publishDate: 2026-11-08
@@ -8,7 +8,7 @@ tags: ['Xcode', 'AI', 'Claude Code']
 draft: false
 ---
 
-After I installed the official Xcode plugin (`xcode@claude-plugins-official`) in Claude Code, the descriptions of 19 skills, 10,503 characters in total, were loaded every turn. A skill body is not loaded until the skill is invoked, so I thought installing skills took no space, but descriptions (the `description` in the frontmatter) are different. The description listing has a budget, and once it is exceeded, skills whose descriptions are dropped become less likely to be invoked by Claude.
+After I installed the official Xcode plugin (`xcode@claude-plugins-official`) in Claude Code, 19 skills were added, and their descriptions total 10,503 characters. A skill body is not loaded until the skill is invoked, so I thought installing skills took no space, but descriptions (the `description` in the frontmatter) are loaded every turn as a listing. The listing has a budget, and once it is exceeded, skills whose descriptions are dropped become less likely to be invoked by Claude. The 10,503 characters are the total of the descriptions on disk. I did not measure how much was actually loaded each turn.
 
 ## Description length can be counted from the SKILL.md frontmatter
 
@@ -45,7 +45,7 @@ for d in "$(xcrun agent plugin path --plugin-format claude)"/skills/*/; do
 done
 ```
 
-Comparing their contents, 1 was identical to the 27.3 beta plugin, 2 were identical to the 27.2 plugin, and the other 4 matched neither version. According to the documentation, plugin skills are named `plugin-name:skill-name`, so both they and the skills I placed by hand are loaded as separate skills. Descriptions for the same purpose were loaded twice for 6 skills.
+Comparing their contents, 1 was identical to both the 27.3 beta and 27.2 plugins, and 1 more was identical only to the 27.2 plugin. The other 4 matched neither version. According to the documentation, plugin skills are named `plugin-name:skill-name`, so both they and the skills I placed by hand are loaded as separate skills. Descriptions for the same purpose were loaded twice for 6 skills.
 
 ## Over the budget, descriptions of the least-used skills are dropped
 
@@ -74,7 +74,7 @@ The 6 skills I placed by hand serve the same purpose as the plugin ones, so I th
 
 ## Summary
 
-- A skill body is loaded when it is invoked, but its description is loaded every turn. The Xcode 27.3 beta 1 plugin has 19 skills with 10,503 characters
+- A skill body is loaded when it is invoked, but its description is loaded every turn as part of a listing. The descriptions of the 19 skills in the Xcode 27.3 beta 1 plugin total 10,503 characters. I did not measure how much was actually loaded each turn
 - I had 6 hand-copied skills with the same names, loaded separately from the plugin skills
 - When the listing goes over its budget, descriptions are dropped starting from the least-used skills, and Claude is less likely to invoke them on its own. In a session after installing the plugin, 9 appeared by name only. I estimate this was because of the budget
 
