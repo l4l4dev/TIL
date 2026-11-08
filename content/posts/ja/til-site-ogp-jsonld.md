@@ -8,7 +8,7 @@ tags: ['Astro', 'SEO']
 draft: false
 ---
 
-個人で作っている macOS の1日プランナー [FirnPlanner](https://firnplanner.l4l4.dev/) の開発で分かったことを、このサイトに書いています。サイトは Astro で作り、GitHub Pages の `/TIL/` の下に置いています。記事のリンクを貼ったときにどう見えるかが気になって、ページの head に何が入っているかを確かめました。
+このサイトは Astro で作り、GitHub Pages の `/TIL/` の下に置いています。記事のリンクを貼ったときにどう見えるかが気になって、ページの head に何が入っているかを確かめました。
 
 ## title や canonical はあったが、OGP と JSON-LD はなかった
 

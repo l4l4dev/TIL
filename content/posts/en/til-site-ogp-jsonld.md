@@ -8,7 +8,7 @@ tags: ['Astro', 'SEO']
 draft: false
 ---
 
-I write what I learn while building [FirnPlanner](https://firnplanner.l4l4.dev/), a macOS day planner I make as a personal project, on this site. The site is built with Astro and served from `/TIL/` on GitHub Pages. I wanted to know how links to it look when shared, so I checked what was in the head of its pages.
+This site is built with Astro and served from `/TIL/` on GitHub Pages. I wanted to know how links to it look when shared, so I checked what was in the head of its pages.
 
 ## There was a title and canonical, but no OGP or JSON-LD
 
