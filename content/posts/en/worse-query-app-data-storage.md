@@ -60,7 +60,7 @@ Whenever a fix arrives, what app developers can act on now is what their app sto
 
 Check whether login tokens, API keys, or wallet private keys and recovery phrases are stored in plaintext in files or in `UserDefaults`. `UserDefaults` is saved as a plist in the container's `Library/Preferences`. SQLite, Core Data, and SwiftData stores, and any file written to `Documents` or `Caches`, are in the container too.
 
-Put secrets in the keychain. The published PoC reaches files inside containers. Keychain items are not files in a container; they are managed by the system's security daemon, so they sit outside the reach of the technique as published. That is a statement about this PoC, not a guarantee about future variants. Use the keychain, and also reduce how many secrets you keep on the device at all.
+Put secrets in the keychain. Keychain items are not files in a container; they are managed by the system's security daemon. The README's list of accessible paths does not include where the keychain is stored either. That is a statement about this PoC, not a guarantee about future variants. Use the keychain, and also reduce how many secrets you keep on the device at all.
 
 For large data that has to live in files, one option is to encrypt it with CryptoKit or similar and keep only the key in the keychain.
 
