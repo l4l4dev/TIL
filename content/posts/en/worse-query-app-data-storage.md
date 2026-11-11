@@ -30,7 +30,7 @@ The README lists the paths it can access.
 
 For app developers, the important ones are `Data/Application/*` and `Shared/AppGroup/*`. The first holds each app's data container (where Documents, Library, and tmp live). The second holds App Group containers that an app shares with its widgets and extensions. `PluginKitPlugin/*` holds extension containers.
 
-The README does not explain the mechanism further. The comments in the source show that it uses a query to containermanagerd, the system daemon that manages containers, for the location of an App Group container. It is not a bug in WebView or any particular framework, so files in the container are exposed the same way in apps that never use a WebView.
+The README does not explain the mechanism further. The comments in the source show that it uses a query to containermanagerd, the system daemon that manages containers, for the location of an App Group container. It is not a bug in WebView or any particular framework, so files in the container are exposed the same way in apps that never use a WebView. The repository also includes pathleak, a helper that works out the paths of other apps' containers by brute-forcing inode numbers, which is how an attacking app finds the containers to target.
 
 ## It requires a malicious app to be installed and run
 
@@ -38,17 +38,19 @@ worse_query does not take over a device on its own. An app that embeds it has to
 
 The [alert from the security firm SlowMist](https://x.com/SlowMist_Team/status/2120045378792010166) reads it the same way. It is a container sandbox escape, not a jailbreak. An app that exploits it can reach system paths and read or modify other apps' data. The bug does not steal assets by itself, and the risk starts when a user installs an app from an untrusted source, such as a sideloaded IPA. The [warning from the exchange Binance](https://x.com/binance/status/2120093246399430770) says it "allows malicious apps to read local files from other apps" and that "this is an iOS-level issue, not unique to Binance."
 
-Whether an App Store app can exploit it is not settled. The author reportedly said on X that it can be exploited even from an App Store app, but I could not find the original post. App Groups are a standard capability for App Store apps, so the prerequisite can be met. I could not confirm whether such an app would pass review, or whether any app distributed through the App Store has actually used it.
+The author has said this directly on X: worse_query "would absolutely be exploitable from an App Store app," and an attacker "would just have to pass App Review" ([post](https://x.com/forcequitOS/status/2120249200478961791), 2026-11-11). App Groups are a standard capability for App Store apps, so the prerequisite can be met. In the same post, the author pointed to FomoPeek, a malicious app that passed App Review and was later analyzed by SlowMist, as a precedent that review is not a guarantee. Whether any app distributed through the App Store has actually used worse_query is still not confirmed.
 
 ## As of 2026-11-11, Apple has not announced a fix
 
 Apple released iOS 27.2.1 and iOS 26.7.3 on 2026-11-09. Neither security note ([27.2.1](https://support.apple.com/en-us/149715), [26.7.3](https://support.apple.com/en-us/149716)) has an entry for worse_query or the sandbox, and neither mentions containermanagerd. The fixes are for Bluetooth, AirPlay, Messages, and other components.
 
-According to [an article on The CyberSec Guru](https://thecybersecguru.com/news/worse-query-ios-sandbox-escape/), the author wrote on X that worse_query is not patched in iOS 27.2.1 and 27.3 beta 1, and that the README will be updated when it is. I could not check the original post for this either.
+The author has stated this directly on X: worse_query is "not patched in iOS 27.2.1 and 27.3 beta 1," and the README's supported versions will be updated when it is patched ([post](https://x.com/forcequitOS/status/2120125653085270418), 2026-11-10).
 
 SlowMist's alert recommends keeping iOS up to date and installing Apple's fix as soon as one is released. That is advice to install a fix when it ships. It does not say that 27.2.1 fixed the bug, so it is safer not to read it as "updating to 27.2.1 protects you."
 
 Sources also list the affected versions differently. The README says 26.0 through 26.7.2 and 27.2, while Binance names 26.7.1, 27.0.1, and 27.2.
+
+For scale, the predecessor bad_query lists iOS 26.0 through 26.6.1 and iOS 27.0 beta 4 as its targets in its README, and iOS 26.7 is not among them.
 
 ## What developers should review is anything kept in plaintext in the container
 
@@ -58,7 +60,7 @@ Whenever a fix arrives, what app developers can act on now is what their app sto
 
 Check whether login tokens, API keys, or wallet private keys and recovery phrases are stored in plaintext in files or in `UserDefaults`. `UserDefaults` is saved as a plist in the container's `Library/Preferences`. SQLite, Core Data, and SwiftData stores, and any file written to `Documents` or `Caches`, are in the container too.
 
-Put secrets in the keychain. The keychain storage location is not in the README's list. Still, I found nothing confirming that worse_query cannot read keychain items, so I cannot say the keychain is safe. Use the keychain, and also reduce how many secrets you keep on the device at all.
+Put secrets in the keychain. The published PoC reaches files inside containers. Keychain items are not files in a container; they are managed by the system's security daemon, so they sit outside the reach of the technique as published. That is a statement about this PoC, not a guarantee about future variants. Use the keychain, and also reduce how many secrets you keep on the device at all.
 
 For large data that has to live in files, one option is to encrypt it with CryptoKit or similar and keep only the key in the keychain.
 
@@ -107,9 +109,7 @@ On the app side, the work is reviewing how data is stored. When users ask throug
 
 ## What I could not confirm
 
-- The original X posts for the author's statements that it is "not patched in 27.2.1 and 27.3 beta 1" and that it can be exploited from App Store apps
 - Whether any app distributed through the App Store has exploited worse_query
-- Whether worse_query can read keychain items
 - Whether Apple has fixed worse_query or plans to
 
 ## Summary
@@ -128,4 +128,5 @@ On the app side, the work is reviewing how data is stored. When users ask throug
 - [Binance warning](https://x.com/binance/status/2120093246399430770) (X, 2026-11-10)
 - [Apple: About the security content of iOS 27.2.1 and iPadOS 27.2.1](https://support.apple.com/en-us/149715)
 - [Apple: About the security content of iOS 26.7.3 and iPadOS 26.7.3](https://support.apple.com/en-us/149716)
-- [The CyberSec Guru: worse_query iOS Zero-Day Explained](https://thecybersecguru.com/news/worse-query-ios-sandbox-escape/) (source quoting the author on 27.2.1)
+- [The author on the patch status](https://x.com/forcequitOS/status/2120125653085270418) (X, 2026-11-10)
+- [The author on App Store apps](https://x.com/forcequitOS/status/2120249200478961791) (X, 2026-11-11)

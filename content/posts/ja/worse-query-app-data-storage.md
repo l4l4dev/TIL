@@ -30,7 +30,7 @@ README には、アクセスできるパスの一覧が載っています。
 
 アプリの開発者に関係が深いのは、`Data/Application/*` と `Shared/AppGroup/*` です。前者は各アプリのデータのコンテナ (Documents、Library、tmp が入る場所) で、後者はアプリとウィジェットや拡張機能が共有する App Group のコンテナです。`PluginKitPlugin/*` は、拡張機能のコンテナにあたります。
 
-仕組みについて、README はこれ以上説明していません。ソースのコメントを見ると、App Group のコンテナの場所を、コンテナを管理するシステムのデーモン containermanagerd に問い合わせる処理を使っています。WebView や特定のフレームワークの不具合ではないので、WebView を使っていないアプリでも、コンテナに置いたファイルは同じように扱われます。
+仕組みについて、README はこれ以上説明していません。ソースのコメントを見ると、App Group のコンテナの場所を、コンテナを管理するシステムのデーモン containermanagerd に問い合わせる処理を使っています。WebView や特定のフレームワークの不具合ではないので、WebView を使っていないアプリでも、コンテナに置いたファイルは同じように扱われます。なお、リポジトリには pathleak という補助コードも入っています。他のアプリのコンテナのパス（UUID）を inode 番号の総当たりで割り出すもので、攻撃側が狙う先のパスを知る手段にあたります。
 
 ## 前提は、悪意のあるアプリを入れて動かすこと
 
@@ -38,17 +38,19 @@ worse_query は、それだけで端末を乗っ取るものではありませ�
 
 セキュリティ企業 SlowMist の[アラート](https://x.com/SlowMist_Team/status/2120045378792010166)も、同じ読み方です。コンテナのサンドボックス脱出で、脱獄ではない。悪用に成功したアプリは、システムのパスにアクセスし、ほかのアプリのデータを読み書きできる。不具合そのものは資産を盗まず、出どころの分からないアプリ (サイドロードした IPA など) を入れたときに危険が始まる、という説明です。取引所の Binance の[警告](https://x.com/binance/status/2120093246399430770)は、「悪意のあるアプリがほかのアプリのローカルのファイルを読める」「Binance に限らない iOS の問題だ」と書いています。
 
-App Store のアプリから悪用できるかは、はっきりしていません。作者は X で「App Store のアプリからでも悪用できる」と述べたとされていますが、筆者はその投稿の原文を見つけられませんでした。App Group は App Store のアプリでも普通に使える機能なので、前提の部分は満たせます。それでも審査を通るかを含めて、実際に App Store から配られた例があるかは確認できていません。
+作者は X で、この点をはっきり書いています。「App Store のアプリからでも悪用できる。攻撃者は App Review を通過すればいいだけだ」という投稿です（[投稿](https://x.com/forcequitOS/status/2120249200478961791)、2026-11-11）。App Group は App Store のアプリでも普通に使える機能なので、前提の部分は満たせます。作者はこの投稿で、審査を通過してしまった悪性アプリの例として、SlowMist が分析した FomoPeek にも触れています。実際に worse_query を悪用したアプリが App Store で配られた例があるかは、確認できていません。
 
 ## 2026-11-11 の時点で、Apple は修正を公表していない
 
 Apple は 2026-11-09 に iOS 27.2.1 と iOS 26.7.3 を出しました。どちらのセキュリティノート ([27.2.1](https://support.apple.com/en-us/149715)、[26.7.3](https://support.apple.com/en-us/149716)) にも、worse_query やサンドボックスに当たる項目はなく、containermanagerd という語も出てきません。直したのは Bluetooth、AirPlay、メッセージなどの不具合です。
 
-[The CyberSec Guru の記事](https://thecybersecguru.com/news/worse-query-ios-sandbox-escape/)によると、作者は X で、worse_query は iOS 27.2.1 と 27.3 beta 1 ではまだ直っていないと書きました。直ったら README の対応バージョンを更新する、とも書いたそうです。こちらも、筆者は投稿の原文を確認できていません。
+作者は X で、worse_query は iOS 27.2.1 と 27.3 beta 1 ではまだ直っていないと明言しています。直ったら README の対応バージョンを更新する、とも書いています（[投稿](https://x.com/forcequitOS/status/2120125653085270418)、2026-11-10）。
 
 SlowMist のアラートは「iOS を最新に保ち、Apple の修正が出たらすぐ入れる」と勧めています。これは修正が出たら入れるという助言で、27.2.1 で直ったとは書いていません。27.2.1 に上げれば防げる、という読み方はしないほうが安全です。
 
 対象のバージョンの書き方も、出典によって違います。README は 26.0〜26.7.2 と 27.2、Binance は 26.7.1、27.0.1、27.2 と書いています。
+
+前作の bad_query は、README で iOS 26.0〜26.6.1 と iOS 27.0 beta 4 を対象としており、iOS 26.7 は対象に含まれていません。
 
 ## 開発者が見直すのは、コンテナに平文で置いているもの
 
@@ -58,7 +60,7 @@ SlowMist のアラートは「iOS を最新に保ち、Apple の修正が出た�
 
 ログインのトークン、API キー、ウォレットの秘密鍵やリカバリーフレーズを、ファイルや `UserDefaults` に平文で置いていないかを確かめます。`UserDefaults` の中身は、コンテナの `Library/Preferences` に plist として保存されます。SQLite、Core Data、SwiftData のストアや、`Documents` と `Caches` に書いたファイルも、コンテナの中です。
 
-秘密はキーチェーンに入れます。README の一覧に、キーチェーンの保存場所は入っていません。ただ、worse_query でキーチェーンの項目を読めないと確かめた情報は見つけられなかったので、「キーチェーンなら安全」とまでは言えません。キーチェーンに入れたうえで、端末に置く秘密の量そのものを減らすのが確実です。
+秘密はキーチェーンに入れます。公開された PoC が届くのはコンテナの中のファイルまでで、キーチェーンの項目はコンテナの中のファイルではなく、システムのセキュリティデーモンが管理する仕組みです。少なくとも今回公開された手法の到達範囲には、キーチェーンは含まれていません。将来の亜種まで保証する話ではないので、キーチェーンに入れたうえで、端末に置く秘密の量そのものを減らすのが確実です。
 
 ファイルに置くしかない大きなデータは、CryptoKit などで暗号化し、鍵だけをキーチェーンに置く方法があります。
 
@@ -107,9 +109,7 @@ for await result in Transaction.currentEntitlements {
 
 ## 確認できていないこと
 
-- 作者の「27.2.1 と 27.3 beta 1 ではまだ直っていない」「App Store のアプリからでも悪用できる」という発言の、X の投稿の原文
 - App Store で配られたアプリが worse_query を悪用した例があるか
-- worse_query でキーチェーンの項目を読めるか
 - Apple が worse_query を直したか、直す予定があるか
 
 ## まとめ
@@ -128,4 +128,5 @@ for await result in Transaction.currentEntitlements {
 - [Binance の警告](https://x.com/binance/status/2120093246399430770) (X、2026-11-10)
 - [Apple: About the security content of iOS 27.2.1 and iPadOS 27.2.1](https://support.apple.com/en-us/149715)
 - [Apple: About the security content of iOS 26.7.3 and iPadOS 26.7.3](https://support.apple.com/en-us/149716)
-- [The CyberSec Guru: worse_query iOS Zero-Day Explained](https://thecybersecguru.com/news/worse-query-ios-sandbox-escape/) (作者の 27.2.1 についての発言の引用元)
+- [作者による修正状況の投稿](https://x.com/forcequitOS/status/2120125653085270418) (X、2026-11-10)
+- [作者による App Store のアプリについての投稿](https://x.com/forcequitOS/status/2120249200478961791) (X、2026-11-11)
