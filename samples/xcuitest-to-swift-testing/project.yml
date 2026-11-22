@@ -1,0 +1,38 @@
+name: XCUITestMigration
+options:
+  bundleIdPrefix: dev.example.uitestmigration
+  deploymentTarget:
+    iOS: "27.0"
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    CODE_SIGN_STYLE: Automatic
+    GENERATE_INFOPLIST_FILE: YES
+targets:
+  MigrationApp:
+    type: application
+    platform: iOS
+    sources: [App]
+    settings:
+      base:
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+  XCTestUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [XCTestUITests]
+    dependencies:
+      - target: MigrationApp
+  SwiftTestingUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [SwiftTestingUITests]
+    dependencies:
+      - target: MigrationApp
+schemes:
+  XCUITestMigration:
+    build:
+      targets:
+        MigrationApp: all
+    test:
+      targets: [XCTestUITests, SwiftTestingUITests]
