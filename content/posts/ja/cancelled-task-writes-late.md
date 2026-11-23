@@ -112,7 +112,7 @@ store.remove()
 
 ## 待てない場面では、世代を lock の中で確かめてから書いた
 
-消す側が async でない関数で、`await` を書けないこともあります。この場合は、鍵の置き場に世代の番号を持たせました。消す側は、1 つの lock の中で世代を 1 つ進めてから消します。書く側は、仕事を始めたときの世代を覚えておきます。書くときは、同じ lock の中で世代が変わっていないのを確かめてから書きます。
+消す側が async でない関数で、`await` を書けないこともあります。この場合は、鍵の置き場に世代の番号を持たせました。消す側は、1 つの lock の中で世代を 1 つ進めてから消します。書く側は、Task を作る前に世代を読み、仕事に持たせます。書くときは、同じ lock の中で世代が変わっていないのを確かめてから書きます。
 
 ```swift
 final class GuardedKeyStore: Sendable {
@@ -138,25 +138,58 @@ final class GuardedKeyStore: Sendable {
 }
 ```
 
-仕事は `Task.isCancelled` を見ず、世代だけで決めます。
+仕事は `Task.isCancelled` を見ず、持たされた世代だけで決めます。
 
 ```swift
 let generation = store.currentGeneration
+let task = Task {
+    await SaveJob.gated(store: store, generation: generation, log: log)
+}
+```
+
+```swift
+// SaveJob.gated
 _ = await slowCheck()
 let wrote = store.write("secret-key", ifGeneration: generation)
+log(wrote ? "job: wrote the key" : "job: generation changed, did not write")
 ```
 
 さきほど鍵が戻ったのと同じ並びで試しました。確認が終わって書く直前に、cancel と消去を入れています。
 
 ```
-[+   0 ms] job: started with generation 0
-[+ 320 ms] job: slow check returned, Task.isCancelled = false
-[+ 320 ms] main: job is about to write; cancel(), then invalidateAndRemove() (no await)
+[+   0 ms] job: started with generation 0, Task.isCancelled = false
+[+ 319 ms] job: slow check returned, Task.isCancelled = false
+[+ 319 ms] main: job is about to write; cancel(), then invalidateAndRemove() (no await)
 [+ 320 ms] job: generation changed, did not write
-[+ 321 ms] file after: (absent)
+[+ 320 ms] file after: (absent)
 ```
 
 鍵は戻りませんでした。世代の確認と書き込みが 1 つの lock の中にあり、消去も同じ lock を取るので、あいだに消去が入りません。
+
+## 世代を Task の中で読むと、Task が動き出す前の消去のあとで鍵が戻った
+
+世代を読む場所は、Task を作る前にしています。はじめは Task の中の最初の行で読んでいて、この記事のレビューで、それでは遅い並びがあると指摘を受けました。Task を作ってから中の処理が動き出すまでのあいだに、cancel と消去が済む並びです。仕事の最初に合図を待つ処理を入れて、この並びを作りました。
+
+```
+[+   0 ms] main: job has not started yet; cancel(), then invalidateAndRemove() (no await)
+[+   0 ms] job: started with generation 1, Task.isCancelled = true
+[+ 319 ms] job: slow check returned, Task.isCancelled = true
+[+ 320 ms] job: wrote the key
+[+ 320 ms] file after: "secret-key"
+```
+
+仕事は、消去で進んだあとの世代 1 を読みました。書くときの世代も 1 なので、世代は変わっていないと判定され、鍵を書いています。同じ並びで、Task を作る前に世代を読むと、鍵は戻りませんでした。
+
+```
+[+   0 ms] main: read generation 0 before creating the task
+[+   0 ms] main: job has not started yet; cancel(), then invalidateAndRemove() (no await)
+[+   0 ms] job: started with generation 0, Task.isCancelled = true
+[+ 319 ms] job: slow check returned, Task.isCancelled = true
+[+ 319 ms] job: generation changed, did not write
+[+ 319 ms] file after: (absent)
+```
+
+仕事が持っているのは消去の前の世代 0 なので、書き込みは断られました。
 
 ## FirnPlanner では、待てる所は待ち、待てない所は世代で防いだ
 
@@ -164,7 +197,7 @@ FirnPlanner では、2 つとも使いました。
 
 同期のデータを消す操作と、同期をやり直す操作は async です。cancel した仕事を覚えておき、すべて終わるのを待ってから鍵を消すようにしました。cancel した仕事が複数あることもあるので、cancel した順につないで待ちます。
 
-同期が使えないときに鍵を消す操作は、待たずにすぐ消します。こちらは、鍵を書く所に世代の確認を入れました。
+同期が使えないときに鍵を消す操作は、待たずにすぐ消します。こちらは、鍵を書く所に世代の確認を入れました。世代は、仕事を頼むときに Task の外で読んで持たせています。
 
 ## まとめ
 
@@ -173,6 +206,7 @@ FirnPlanner では、2 つとも使いました。
 - 書く直前に `Task.isCancelled` を見ると、今回の流れでは戻らなかった。確認と書き込みのあいだに消去が入る並びでは戻った
 - cancel のあとに `await task.value` で待ってから消すと、戻らなかった
 - 待てない場面では、消去で世代を進め、書く側が同じ lock の中で世代を確かめると、戻らなかった
+- 世代は Task を作る前に読む。Task の中で読むと、Task が動き出す前に消去が済んだとき、新しい世代を読んで鍵を書いた
 
 試したパッケージは [samples/cancelled-task-writes-late](https://github.com/l4l4dev/TIL/tree/main/samples/cancelled-task-writes-late) に置きました。`swift run cancel-demo` で、ここに載せたのと同じ並びのログが出ます。時刻の数字は、流すたびに少し変わります。3 回流して、鍵が戻るかどうかは 3 回とも同じでした。
 

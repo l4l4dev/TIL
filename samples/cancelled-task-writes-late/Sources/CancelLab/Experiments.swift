@@ -81,11 +81,12 @@ public enum Experiments {
         let guarded = GuardedKeyStore(store: store)
         let reached = Gate()
         let proceed = Gate()
+        let generation = guarded.currentGeneration
         let task = Task {
-            await SaveJob.gated(store: guarded, log: log) {
+            await SaveJob.gated(store: guarded, generation: generation, log: log, afterCheck: {
                 await reached.open()
                 await proceed.wait()
-            }
+            })
         }
         await reached.wait()
         log("main: job is about to write; cancel(), then invalidateAndRemove() (no await)")
@@ -94,5 +95,36 @@ public enum Experiments {
         await proceed.open()
         await task.value
         return finish("4", store, log)
+    }
+
+    /// 5a. The removal lands before the job starts, and the job reads the generation itself.
+    public static func generationReadInsideTask(log: Log) async -> Outcome {
+        await removeBeforeJobStarts(name: "5a", captureBeforeTask: false, log: log)
+    }
+
+    /// 5b. Same ordering, but the generation is read before the task is created.
+    public static func generationReadBeforeTask(log: Log) async -> Outcome {
+        await removeBeforeJobStarts(name: "5b", captureBeforeTask: true, log: log)
+    }
+
+    private static func removeBeforeJobStarts(
+        name: String, captureBeforeTask: Bool, log: Log
+    ) async -> Outcome {
+        let store = KeyStore.temporary()
+        let guarded = GuardedKeyStore(store: store)
+        let proceed = Gate()
+        let generation: Int? = captureBeforeTask ? guarded.currentGeneration : nil
+        if let generation { log("main: read generation \(generation) before creating the task") }
+        let task = Task {
+            await SaveJob.gated(store: guarded, generation: generation, log: log, beforeStart: {
+                await proceed.wait()
+            })
+        }
+        log("main: job has not started yet; cancel(), then invalidateAndRemove() (no await)")
+        task.cancel()
+        guarded.invalidateAndRemove()
+        await proceed.open()
+        await task.value
+        return finish(name, store, log)
     }
 }

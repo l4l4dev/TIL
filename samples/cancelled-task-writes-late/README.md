@@ -15,8 +15,8 @@ swift run cancel-demo
 swift test
 ```
 
-`swift run cancel-demo` は 5 つの実験を順に流し、時刻つきのログと、最後にファイルの中身を出します。`swift test` は同じ結果を Swift Testing で確かめます。
-`swift run cancel-demo` runs five experiments in order and prints a timestamped log and the file contents at the end. `swift test` checks the same results with Swift Testing.
+`swift run cancel-demo` は 7 つの実験を順に流し、時刻つきのログと、最後にファイルの中身を出します。`swift test` は同じ結果を Swift Testing で確かめます。
+`swift run cancel-demo` runs seven experiments in order and prints a timestamped log and the file contents at the end. `swift test` checks the same results with Swift Testing.
 
 環境変数 `CANCEL_LAB_LOG_DIR` にディレクトリを渡すと、実験ごとのログをファイルにも書きます。
 Set the `CANCEL_LAB_LOG_DIR` environment variable to a directory to also write a log file per experiment.
@@ -30,13 +30,15 @@ Set the `CANCEL_LAB_LOG_DIR` environment variable to a directory to also write a
 | 2b | 確認と書き込みのあいだに cancel と消去を入れる / Cancel and remove between the check and the write | 戻る / Comes back |
 | 3 | cancel のあと `await task.value` で待ってから消す / Cancel, await `task.value`, then remove | 戻らない / Stays removed |
 | 4 | 世代を lock の中で確かめてから書く。割り込みは 2b と同じ / Check a generation under a lock before writing, with the same interruption as 2b | 戻らない / Stays removed |
+| 5a | 仕事が動き出す前に消去が済み、世代は Task の中で読む / The removal finishes before the job starts, and the generation is read inside the Task | 戻る / Comes back |
+| 5b | 5a と同じ並びで、世代は Task を作る前に読む / Same sequence as 5a, with the generation read before the Task is created | 戻らない / Stays removed |
 
 ## 中身 / Contents
 
 | ファイル / File | 内容 / What it does |
 |---|---|
 | `Sources/CancelLab/Support.swift` | 鍵のファイルの置き場、ログ、合図を待つ `Gate`、キャンセルに反応しない `slowCheck`、世代つきの `GuardedKeyStore` / The key file store, the log, a `Gate` that waits for a signal, a `slowCheck` that does not react to cancellation, and `GuardedKeyStore` with a generation |
-| `Sources/CancelLab/SaveJob.swift` | 「遅い確認のあとで鍵を書く」仕事の 3 つの版 / Three versions of the "slow check, then write the key" job |
-| `Sources/CancelLab/Experiments.swift` | 5 つの実験 / The five experiments |
+| `Sources/CancelLab/SaveJob.swift` | 「遅い確認のあとで鍵を書く」仕事の 3 つの版。世代つきの版は、渡された世代を使う / Three versions of the "slow check, then write the key" job |
+| `Sources/CancelLab/Experiments.swift` | 7 つの実験 / The seven experiments |
 | `Sources/cancel-demo/main.swift` | 実験を順に流す / Runs the experiments in order |
 | `Tests/CancelLabTests/CancelLabTests.swift` | 同じ結果を確かめるテスト / Tests that check the same results |

@@ -112,7 +112,7 @@ The job did write the key, but the removal came after it, so the file stayed rem
 
 ## Where waiting is not possible, I checked a generation under a lock before writing
 
-Sometimes the removing side is a function that is not async and cannot use `await`. For that case, I gave the key store a generation number. The removing side takes a lock, advances the generation by one, and then removes the key. The writing side remembers the generation from when the job started. When it writes, it takes the same lock, checks that the generation has not changed, and then writes.
+Sometimes the removing side is a function that is not async and cannot use `await`. For that case, I gave the key store a generation number. The removing side takes a lock, advances the generation by one, and then removes the key. The writing side reads the generation before it creates the Task and hands it to the job. When it writes, it takes the same lock, checks that the generation has not changed, and then writes.
 
 ```swift
 final class GuardedKeyStore: Sendable {
@@ -138,25 +138,58 @@ final class GuardedKeyStore: Sendable {
 }
 ```
 
-The job does not look at `Task.isCancelled`. It decides by the generation alone.
+The job does not look at `Task.isCancelled`. It decides by the generation it was given.
 
 ```swift
 let generation = store.currentGeneration
+let task = Task {
+    await SaveJob.gated(store: store, generation: generation, log: log)
+}
+```
+
+```swift
+// SaveJob.gated
 _ = await slowCheck()
 let wrote = store.write("secret-key", ifGeneration: generation)
+log(wrote ? "job: wrote the key" : "job: generation changed, did not write")
 ```
 
 I tried it with the same sequence that brought the key back earlier. Cancel and the removal land after the check finishes, right before the write.
 
 ```
-[+   0 ms] job: started with generation 0
-[+ 320 ms] job: slow check returned, Task.isCancelled = false
-[+ 320 ms] main: job is about to write; cancel(), then invalidateAndRemove() (no await)
+[+   0 ms] job: started with generation 0, Task.isCancelled = false
+[+ 319 ms] job: slow check returned, Task.isCancelled = false
+[+ 319 ms] main: job is about to write; cancel(), then invalidateAndRemove() (no await)
 [+ 320 ms] job: generation changed, did not write
-[+ 321 ms] file after: (absent)
+[+ 320 ms] file after: (absent)
 ```
 
 The key did not come back. The generation check and the write are inside one lock, and the removal takes the same lock, so the removal cannot land between them.
+
+## Reading the generation inside the Task let the key come back when the removal finished before the Task started running
+
+The generation is read before the Task is created. At first I read it on the first line inside the Task, and the review of this post pointed out a sequence where that is too late. It is the sequence where cancel and the removal finish after the Task is created and before its body starts running. I built it by making the job wait for a signal at its very start.
+
+```
+[+   0 ms] main: job has not started yet; cancel(), then invalidateAndRemove() (no await)
+[+   0 ms] job: started with generation 1, Task.isCancelled = true
+[+ 319 ms] job: slow check returned, Task.isCancelled = true
+[+ 320 ms] job: wrote the key
+[+ 320 ms] file after: "secret-key"
+```
+
+The job read generation 1, the value after the removal advanced it. The generation at write time is also 1, so the check passed and the job wrote the key. In the same sequence, reading the generation before creating the Task kept the key removed.
+
+```
+[+   0 ms] main: read generation 0 before creating the task
+[+   0 ms] main: job has not started yet; cancel(), then invalidateAndRemove() (no await)
+[+   0 ms] job: started with generation 0, Task.isCancelled = true
+[+ 319 ms] job: slow check returned, Task.isCancelled = true
+[+ 319 ms] job: generation changed, did not write
+[+ 319 ms] file after: (absent)
+```
+
+The job holds generation 0, from before the removal, so the write was refused.
 
 ## In FirnPlanner, I wait where waiting is possible and use a generation where it is not
 
@@ -164,7 +197,7 @@ FirnPlanner uses both.
 
 The operation that erases sync data and the one that restarts sync are async. They now keep track of the cancelled work and wait for all of it to finish before removing the key. There can be more than one cancelled job, so they are chained in the order they were cancelled and awaited together.
 
-The operation that removes the key while sync is unavailable removes it right away without waiting. For this one, I added the generation check where the key is written.
+The operation that removes the key while sync is unavailable removes it right away without waiting. For this one, I added the generation check where the key is written. The generation is read outside the Task, at the point where the work is requested, and handed to it.
 
 ## Summary
 
@@ -173,6 +206,7 @@ The operation that removes the key while sync is unavailable removes it right aw
 - Looking at `Task.isCancelled` right before writing kept the key removed in this flow. The key came back when the removal landed between the check and the write
 - Waiting with `await task.value` after cancel, and removing after that, kept the key removed
 - Where waiting is not possible, advancing a generation on removal and checking it under the same lock on write kept the key removed
+- Read the generation before creating the Task. When it was read inside the Task and the removal finished before the Task started running, the job read the new generation and wrote the key
 
 The package I used is in [samples/cancelled-task-writes-late](https://github.com/l4l4dev/TIL/tree/main/samples/cancelled-task-writes-late). `swift run cancel-demo` prints logs in the same order as shown here. The times change a little from run to run. I ran it three times, and whether the key came back was the same every time.
 

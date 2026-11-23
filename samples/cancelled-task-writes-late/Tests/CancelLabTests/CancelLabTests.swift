@@ -23,4 +23,12 @@ import Testing
     @Test func generationGateKeepsTheKeyRemoved() async {
         #expect(await Experiments.generationGate(log: log()).keyIsBack == false)
     }
+
+    @Test func readingTheGenerationInsideTheTaskIsTooLate() async {
+        #expect(await Experiments.generationReadInsideTask(log: log()).keyIsBack)
+    }
+
+    @Test func readingTheGenerationBeforeTheTaskKeepsTheKeyRemoved() async {
+        #expect(await Experiments.generationReadBeforeTask(log: log()).keyIsBack == false)
+    }
 }
